@@ -1,6 +1,7 @@
 import type { Translations } from "../types";
 import * as common from "../sections/common.ts";
 import * as messages from "../sections/messages.ts";
+import * as ntfy from "../sections/ntfy.ts";
 import * as qq from "../sections/qq.ts";
 import * as wechat from "../sections/wechat.ts";
 import * as mail from "../sections/mail.ts";
@@ -21,6 +22,7 @@ const en: Translations = {
 
   common: common.en,
   messages: messages.en,
+  ntfy: ntfy.en,
   qq: qq.en,
   wechat: wechat.en,
   mail: mail.en,

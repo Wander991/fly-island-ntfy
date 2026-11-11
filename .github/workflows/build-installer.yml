@@ -1,0 +1,55 @@
+name: Build fly-island-ntfy installer (Windows)
+
+# 云端编译 fly-island-ntfy 独立安装包（com.focusd.island.ntfy）。
+# 全部重活（VS 工具链 / Win11 SDK / 数百 crate 编译）都在 GitHub 的 Windows Runner 上完成，
+# 你只需在本机做一次几 MB 的 git 推送 + 下载约 100MB 的成品安装包，不烧热点流量。
+on:
+  push:
+    branches: [ntfy-patch]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: pnpm
+
+      # 与 rust-toolchain.toml 完全一致：1.99.1
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.99.1
+          components: clippy
+
+      # 缓存 cargo 编译产物，首次之后飞快
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # Tauri 的 NSIS 打包器需要 makensis（GitHub Runner 已预装，只需入 PATH）
+      - name: Put NSIS on PATH
+        shell: pwsh
+        run: echo "C:\Program Files (x86)\NSIS" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      # beforeBuildCommand(pnpm build = tsc && vite build) 会自动先编前端，
+      # 再编 Rust 并打 NSIS 安装包。--bundles nsis 只出安装包，省时。
+      - name: Build Tauri app and NSIS installer
+        run: pnpm tauri build --bundles nsis
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fly-island-ntfy-installer
+          path: src-tauri/target/release/bundle/nsis/*.exe
+          if-no-files-found: error

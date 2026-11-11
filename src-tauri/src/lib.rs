@@ -8,6 +8,7 @@ mod media_control;
 mod messenger_activation;
 mod notification_diagnostics;
 mod mail;
+mod ntfy;
 mod qq_notifications;
 mod settings_window;
 mod system;
@@ -74,6 +75,9 @@ pub fn run() {
             if let Err(error) = mail::init(app.handle()) {
                 eprintln!("failed to initialize QQ mail: {error}");
             }
+            if let Err(error) = ntfy::init(app.handle()) {
+                eprintln!("failed to initialize ntfy notifications: {error}");
+            }
             if let Err(error) = qq_notifications::init(app.handle()) {
                 eprintln!("failed to initialize QQ notifications: {error}");
             }
@@ -102,6 +106,7 @@ pub fn run() {
             mail;
             wechat_reminders;
             qq_notifications;
+            ntfy;
             island;
             system;
             agent_status;

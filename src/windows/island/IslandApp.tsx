@@ -33,6 +33,8 @@ import { useIslandHover } from "./useIslandHover";
 import { useIslandTranslation } from "./useIslandTranslation";
 import { useMessageView } from "./useMessageView";
 import { useSettingsPageHeight } from "./useSettingsPageHeight";
+import { useNtfy } from "../../features/ntfy/useNtfy";
+import { NtfyOverlay } from "../../features/ntfy/NtfyOverlay";
 // Must stay the last import: IslandApp.css overrides the feature styles above.
 import "./IslandApp.css";
 
@@ -56,6 +58,7 @@ export function IslandApp() {
   const game = useGameMode(settings, { mode, isTucked, collapseIsland, tuckIsland, revealIsland });
   const notices = useIslandNotices(settings, { mode, isTucked, quiet: game.quiet });
   const { qqNotifications, wechatReminders, qqMail, hasMessagePreview } = notices;
+  const ntfy = useNtfy(mode === "collapsed" && !isTucked && !game.quiet);
   const media = useMediaState(settings.musicEnabled);
   const { agentStatus, agentSessions, listedAgentSessions, activeAgentSessionCount, unseenAgentSessions, agentRemoval, agentSession, agentUsages } =
     useIslandAgents(settings);
@@ -250,6 +253,7 @@ export function IslandApp() {
           notebookProps={notebookProps}
         />
       </IslandShell>
+      <NtfyOverlay controller={ntfy} />
     </main>
   );
 }

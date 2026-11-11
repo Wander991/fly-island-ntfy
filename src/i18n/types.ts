@@ -1,5 +1,6 @@
 import type { CommonText } from "./sections/common";
 import type { MessagesText } from "./sections/messages";
+import type { NtfyText } from "./sections/ntfy";
 import type { QqText } from "./sections/qq";
 import type { WechatText } from "./sections/wechat";
 import type { MailText } from "./sections/mail";
@@ -24,6 +25,7 @@ export type Translations = {
 
   common: CommonText;
   messages: MessagesText;
+  ntfy: NtfyText;
   qq: QqText;
   wechat: WechatText;
   mail: MailText;
