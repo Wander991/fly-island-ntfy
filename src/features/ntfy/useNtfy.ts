@@ -60,7 +60,12 @@ export function useNtfy(canPreview: boolean) {
     let unlisten: (() => void) | undefined;
     void (async () => {
       unlisten = await listenNtfyChanged(({ payload }) => {
-        if (cancelled || !acceptSnapshot(payload.snapshot)) return;
+        if (cancelled) return;
+        // A live snapshot proves the Rust service is up and talking to us, so any
+        // stale "ntfy 服务尚未就绪" left over from a startup race is no longer true.
+        if (acceptSnapshot(payload.snapshot)) {
+          setActionError(null);
+        }
         if (
           payload.newestId &&
           payload.snapshot.enabled &&
@@ -74,7 +79,20 @@ export function useNtfy(canPreview: boolean) {
         unlisten();
         return;
       }
-      acceptSnapshot(await getNtfyState());
+      try {
+        acceptSnapshot(await getNtfyState());
+      } catch {
+        // The change listener above already fed us a live snapshot if the service
+        // came up; a one-off failure here is a startup race, not a real outage.
+        if (!cancelled) {
+          try {
+            await new Promise((resolve) => setTimeout(resolve, 800));
+            if (!cancelled) acceptSnapshot(await getNtfyState());
+          } catch {
+            /* leave actionError for the UI to surface */
+          }
+        }
+      }
     })()
       .catch((error: unknown) => {
         if (!cancelled) setActionError(String(error));
