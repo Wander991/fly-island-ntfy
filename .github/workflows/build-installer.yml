@@ -34,7 +34,11 @@ jobs:
         with:
           workspaces: src-tauri
 
-      # Tauri 的 NSIS 打包器需要 makensis（GitHub Runner 已预装，只需入 PATH）
+      # Tauri 的 NSIS 打包器需要 makensis。GitHub windows-latest 默认未预装，先装好。
+      - name: Install NSIS (makensis)
+        run: choco install nsis -y
+        shell: pwsh
+
       - name: Put NSIS on PATH
         shell: pwsh
         run: echo "C:\Program Files (x86)\NSIS" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
