@@ -27,7 +27,7 @@ pub(super) async fn run(service: Arc<NtfyService>, topic: String, generation: u6
         if !config.enabled {
             return;
         }
-        let url = format!("{}/{}/json", config.server.trim_end_matches('/'), topic);
+        let url = format!("{}/{}/sse", config.server.trim_end_matches('/'), topic);
         let mut request = client.get(url.as_str());
         if let Some(token) = config.token.as_deref() {
             request = request.bearer_auth(token);
