@@ -303,3 +303,23 @@
 .ntfy-priority--low {
   background: var(--color-agent-idle);
 }
+
+/* Panel body used inside the messages page (beside QQ / WeChat / Email). */
+.ntfy-panel-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: var(--space-sm);
+}
+
+.ntfy-panel__status-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.ntfy-panel__status-row strong {
+  font-size: 13px;
+  font-weight: 600;
+}

@@ -4,6 +4,7 @@ import { MessagesPanel } from "../../features/messages/Messages";
 import type { useQQNotifications } from "../../features/messages/qq-notifications/QQNotifications";
 import type { useWeChatReminders } from "../../features/messages/wechat/WeChatReminders";
 import type { useMail } from "../../features/messages/mail/MailPanel";
+import type { NtfyController } from "../../features/ntfy/useNtfy";
 import { TodoNotebook } from "../../features/todos/TodoNotebook";
 import type { useTodos } from "../../features/todos/useTodos";
 import { openSettingsWindow } from "../settings/api";
@@ -44,6 +45,7 @@ type IslandPagesProps = {
   qqMail: ReturnType<typeof useMail>;
   qqNotifications: ReturnType<typeof useQQNotifications>;
   wechatReminders: ReturnType<typeof useWeChatReminders>;
+  ntfy: NtfyController;
   messageSource: MessageView["messageSource"];
   openMessages: MessageView["openMessages"];
   media: ReturnType<typeof useMediaState>;
@@ -72,6 +74,7 @@ export function IslandPages({
   qqMail,
   qqNotifications,
   wechatReminders,
+  ntfy,
   messageSource,
   openMessages,
   media,
@@ -112,7 +115,7 @@ export function IslandPages({
       )}
       {page === "qq" && (
         <div className="message-panel">
-          <MessagesPanel qqMail={qqMail} qqNotifications={qqNotifications} wechatReminders={wechatReminders} source={messageSource} enabledSources={features} onSourceChange={openMessages} onOpenMailSettings={() => openSettingsWindow("mail")} />
+          <MessagesPanel qqMail={qqMail} qqNotifications={qqNotifications} wechatReminders={wechatReminders} ntfy={ntfy} source={messageSource} enabledSources={features} onSourceChange={openMessages} onOpenMailSettings={() => openSettingsWindow("mail")} />
         </div>
       )}
       {page === "music" && (

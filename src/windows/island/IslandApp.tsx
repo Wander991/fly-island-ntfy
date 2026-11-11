@@ -238,6 +238,7 @@ export function IslandApp() {
           qqMail={qqMail}
           qqNotifications={qqNotifications}
           wechatReminders={wechatReminders}
+          ntfy={ntfy}
           messageSource={messageSource}
           openMessages={openMessages}
           media={media}
