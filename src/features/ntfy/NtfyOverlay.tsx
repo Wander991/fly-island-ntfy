@@ -1,20 +1,24 @@
 import { Bell } from "lucide-react";
 import { useTranslation } from "../../i18n";
 import type { NtfyController } from "./useNtfy";
-import { priorityClass } from "./NtfyPanelBody";
 import "./NtfyOverlay.css";
 
 /**
- * The floating ntfy preview that pops in the top-right when a new message arrives.
- * Styled to match Fly Island's native message banner: a dark, near-black capsule
- * with a status/source dot + icon on the left, the sender·body inline on the
- * right, and a subtle accent on the far right — flat, minimal, OS-notification feel.
+ * Brief ntfy preview that pops in when a new message arrives.
+ * Styled to read like a piece of Fly Island's own collapsed message bar:
+ * a glass capsule with the ntfy bell as the source icon and `topic · body` inline,
+ * the same way QQ / WeChat messages surface in the island.
  */
 export function NtfyOverlay({ controller }: { controller: NtfyController }) {
   const t = useTranslation();
   const { preview, previewLeaving, openTopic } = controller;
 
   if (!preview) return null;
+
+  // The topic acts as the "sender" (like a contact name), so we never get the
+  // bracket-on-bracket nesting that title+body produced. Body falls back to title.
+  const sender = preview.topic || "ntfy";
+  const message = preview.body || preview.title;
 
   return (
     <div className={`ntfy-overlay${previewLeaving ? " ntfy-overlay--leaving" : ""}`}>
@@ -24,17 +28,17 @@ export function NtfyOverlay({ controller }: { controller: NtfyController }) {
         aria-label={t.ntfy.preview(preview.topic, preview.title)}
         onClick={() => void openTopic(preview.topic)}
       >
-        <span className={`ntfy-preview__dot ${priorityClass(preview.priority)}`} aria-hidden="true" />
         <span className="ntfy-preview__source" aria-hidden="true">
-          <Bell size={13} strokeWidth={2.2} />
+          <Bell size={14} strokeWidth={2.2} />
         </span>
         <span className="ntfy-preview__text">
-          <strong>{preview.title}</strong>
-          <span className="ntfy-preview__sep" aria-hidden="true">·</span>
-          <span className="ntfy-preview__body">{preview.body || preview.topic}</span>
-        </span>
-        <span className="ntfy-preview__dots" aria-hidden="true">
-          <i /><i /><i />
+          <strong>{sender}</strong>
+          {message ? (
+            <>
+              <span className="ntfy-preview__sep" aria-hidden="true">·</span>
+              <span className="ntfy-preview__body">{message}</span>
+            </>
+          ) : null}
         </span>
       </button>
     </div>
