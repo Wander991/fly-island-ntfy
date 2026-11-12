@@ -41,7 +41,9 @@ export type CollapsedItem = "agent" | "lyrics" | "todo";
  */
 export type CollapsedSlot = "text" | "mail" | "shelf" | "music" | "agents";
 /** The page dots in the expanded island's header, which the user can drag into any order. */
-export type PageDot = "todo" | "music" | "clipboard" | "shelf";
+export type PageDot = "system" | "agents" | "todo" | "music" | "clipboard" | "shelf";
+
+/** An extra AI Agent that reports to the local bridge; `id` is its provider key. */
 
 export type IslandSettings = {
   topEdgeLayoutVersion: 1;
@@ -165,6 +167,25 @@ export type IslandSettings = {
   collapsedLayout: CollapsedSlot[];
   /** Order of the page dots in the expanded island's header. */
   pageOrder: PageDot[];
+  /** The page the island opens on first (and after settings close). */
+  defaultPage: PageDot;
+  /** The System status page's module switch and what it shows. */
+  systemStatusEnabled: boolean;
+  systemRefreshSeconds: number;
+  systemShowNetwork: boolean;
+  systemShowCpu: boolean;
+  systemShowRam: boolean;
+  systemShowGpu: boolean;
+  systemShowClock: boolean;
+  systemShowDate: boolean;
+  /** Built-in Windows tool ids shown as quick-launch buttons. */
+  systemTools: string[];
+  /** WeChat previews show the sender and message text read from the window. */
+  wechatContentEnabled: boolean;
+  /** Extra AI Agent tabs (WorkBuddy / 豆包 / Marvis / custom ids). */
+  agentProviderIds: string[];
+  /** Show each provider's remaining token quota at the top of the Agent page. */
+  agentShowQuota: boolean;
   /** While a full-screen app (game, video, slides) is in front: no hover opening or focus, no message pop-ups. */
   gameDoNotDisturb: boolean;
   /** While a full-screen app is in front, the island tucks to the top edge and comes back after. */

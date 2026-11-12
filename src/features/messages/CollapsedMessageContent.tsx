@@ -61,6 +61,18 @@ function MessageContent({ preview }: { preview: MessagePreview }) {
       <NtfyScrollBody text={preview.body.trim() || t.messages.newMessage} />
     </>;
   }
+  // WeChat now carries the sender and message text read from its window. When
+  // the read failed the title is empty and the generic reminder text still shows.
+  if (preview.source === "wechat" && preview.title.trim()) {
+    return <>
+      <MessageSourceIcon source={preview.source} size={16} />
+      <span className="island-message-preview__text">
+        <strong className="island-message-preview__sender">{preview.title.trim()}</strong>
+        <span className="island-message-preview__separator" aria-hidden="true">·</span>
+        <span className="island-message-preview__body">{preview.body.trim() || t.messages.newMessage}</span>
+      </span>
+    </>;
+  }
   return <>
     <MessageSourceIcon source={preview.source} size={16} />
     <span className="island-message-preview__body">{messagePreviewText(preview, t.messages)}</span>

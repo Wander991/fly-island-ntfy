@@ -6,12 +6,14 @@ import type { useWeChatReminders } from "../../features/messages/wechat/WeChatRe
 import type { useMail } from "../../features/messages/mail/MailPanel";
 import type { NtfyController } from "../../features/ntfy/useNtfy";
 import { TodoNotebook } from "../../features/todos/TodoNotebook";
+import { SystemStatusPanel } from "../../features/system-status/SystemStatusPanel";
 import type { useTodos } from "../../features/todos/useTodos";
 import { openSettingsWindow } from "../settings/api";
 import { SettingsPanel } from "../settings/SettingsPanel";
 import "../settings/IslandSettingsPage.css";
 import { TranslationPanel } from "../../features/translation/TranslationPanel";
 import { AgentSessionsPanel } from "../../features/agent-status/AgentSessionsPanel";
+import { AgentProvidersPanel } from "../../features/agent-status/AgentProvidersPanel";
 import type { AgentSessionSummary } from "../../features/agent-status/api";
 import type { UnseenSessions } from "../../features/agent-status/useUnseenSessions";
 import type { AgentUsages } from "../../features/agent-status/usage";
@@ -107,12 +109,14 @@ export function IslandPages({
             onSettingsChange={onSettingsChange}
             qqNotifications={qqNotifications}
             wechatReminders={wechatReminders}
+            ntfy={ntfy}
             detached={detachedSettings}
             onDetachedChange={onDetachedSettingsChange}
             onContentHeight={onSettingsHeight}
           />
         </div>
       )}
+      {page === "system" && <SystemStatusPanel settings={settings} isOpen={mode === "expanded"} />}
       {page === "qq" && (
         <div className="message-panel">
           <MessagesPanel qqMail={qqMail} qqNotifications={qqNotifications} wechatReminders={wechatReminders} ntfy={ntfy} source={messageSource} enabledSources={features} onSourceChange={openMessages} onOpenMailSettings={() => openSettingsWindow("mail")} />
@@ -140,7 +144,13 @@ export function IslandPages({
           onClear={() => void clearClipboardHistoryItems()}
         />
       )}
-      {page === "agents" && <AgentSessionsPanel sessions={agentSessions} view={settings.agentSessionView} sort={settings.agentSessionSort} group={settings.agentSessionGroup} archiveMotion={settings.agentArchiveMotion} cardEffects={settings.agentCardEffects} hostDisplay={settings.agentHostDisplay} showElapsed={settings.agentShowElapsed} showModel={settings.agentShowModel} showActivity={settings.agentShowActivity} unseen={unseenAgentSessions} removal={agentRemoval} reveal={alertedSession} showUsage={settings.agentShowUsage} usages={agentUsages} approvals={agentApprovals} />}
+      {page === "agents" && (
+        <AgentProvidersPanel settings={settings} sessions={agentSessions} isOpen={mode === "expanded"}
+          renderBuiltins={(filtered) => (
+            <AgentSessionsPanel sessions={filtered} view={settings.agentSessionView} sort={settings.agentSessionSort} group={settings.agentSessionGroup} archiveMotion={settings.agentArchiveMotion} cardEffects={settings.agentCardEffects} hostDisplay={settings.agentHostDisplay} showElapsed={settings.agentShowElapsed} showModel={settings.agentShowModel} showActivity={settings.agentShowActivity} unseen={unseenAgentSessions} removal={agentRemoval} reveal={alertedSession} showUsage={settings.agentShowUsage} usages={agentUsages} approvals={agentApprovals} />
+          )}
+        />
+      )}
       {page === "translation" && <TranslationPanel isOpen={mode === "expanded"} onOpenSettings={() => openSettingsWindow("translation")} />}
       {page === "shelf" && <FileShelfPanel shelf={fileShelf} isDropTarget={isShelfDropping} revealOnDoubleClick={settings.shelfDoubleClick === "reveal"} />}
       {page === "todo" && (

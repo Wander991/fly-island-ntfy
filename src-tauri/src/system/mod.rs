@@ -4,6 +4,7 @@
 pub(crate) mod fullscreen;
 pub(crate) mod theme_file;
 pub(crate) mod startup;
+pub(crate) mod status;
 pub(crate) mod todo_export;
 pub(crate) mod update_channel;
 pub(crate) mod updater;
@@ -44,6 +45,9 @@ macro_rules! tauri_commands {
             crate::system::update_channel::updater_download,
             crate::system::update_channel::updater_install,
             crate::system::theme_file::save_theme_file,
+            crate::system::status::get_system_status,
+            crate::system::status::launch_system_tool,
+            crate::system::status::system_tool_ids,
         ] $($rest)*)
     };
 }

@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import type { IslandMode, IslandPage } from "./types";
 
 /** Collapsed / expanded / tucked mode and the open page of the island. */
-export function useIslandNavigation() {
+export function useIslandNavigation(defaultPage: IslandPage = "system") {
   const [mode, setMode] = useState<IslandMode>("collapsed");
   const [isTucked, setIsTucked] = useState(false);
   // Tucked by the minimize button: hovering only peeks the island out, and it slides
@@ -10,7 +10,7 @@ export function useIslandNavigation() {
   const [isPeekTuck, setIsPeekTuck] = useState(false);
   // How long a peeking island waits after the cursor leaves; null keeps the minimize default.
   const [peekRetractDelayMs, setPeekRetractDelayMs] = useState<number | null>(null);
-  const [page, setPage] = useState<IslandPage>("todo");
+  const [page, setPage] = useState<IslandPage>(defaultPage);
   const clipboardShortcutToggleAt = useRef(0);
 
   const setIslandMode = useCallback((nextMode: IslandMode) => {

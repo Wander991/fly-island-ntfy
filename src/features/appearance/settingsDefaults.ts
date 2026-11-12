@@ -3,7 +3,8 @@ import { DEFAULT_LYRICS_SETTINGS } from "../media/lyrics/lyricsSettings.ts";
 import {
   DEFAULT_AGENT_VISIBLE_ROWS, DEFAULT_AUTO_TUCK_RETRACT_DELAY_MS, DEFAULT_CLIPBOARD_VISIBLE_ROWS, DEFAULT_HOVER_COLLAPSE_DELAY_MS,
   DEFAULT_HOVER_EXPAND_DELAY_MS, DEFAULT_ISLAND_CORNER_RADIUS, DEFAULT_MAX_PANEL_HEIGHT, DEFAULT_SHELF_ITEMS, DEFAULT_TASK_TEXT_COLOR,
-  COLLAPSED_ITEMS, COLLAPSED_SLOTS, PAGE_DOTS,
+  COLLAPSED_ITEMS, COLLAPSED_SLOTS, DEFAULT_AGENT_PROVIDER_IDS, DEFAULT_PAGE, DEFAULT_SYSTEM_TOOLS,
+  PAGE_DOTS,
 } from "./settingsLimits.ts";
 import type { IslandSettings } from "./types";
 
@@ -78,6 +79,19 @@ export const DEFAULT_SETTINGS: IslandSettings = {
   collapsedShowCover: false,
   collapsedLayout: [...COLLAPSED_SLOTS],
   pageOrder: [...PAGE_DOTS],
+  defaultPage: DEFAULT_PAGE,
+  systemStatusEnabled: true,
+  systemRefreshSeconds: 2,
+  systemShowNetwork: true,
+  systemShowCpu: true,
+  systemShowRam: true,
+  systemShowGpu: true,
+  systemShowClock: true,
+  systemShowDate: true,
+  systemTools: [...DEFAULT_SYSTEM_TOOLS],
+  wechatContentEnabled: true,
+  agentProviderIds: [...DEFAULT_AGENT_PROVIDER_IDS],
+  agentShowQuota: true,
   shelfEnabled: true,
   translationEnabled: true,
   translationTarget: "island",

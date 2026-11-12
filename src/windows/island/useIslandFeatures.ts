@@ -37,6 +37,7 @@ export function useIslandFeatures({
   openIslandPage,
 }: IslandFeatureOptions) {
   const features = useMemo<IslandFeatures>(() => ({
+    system: settings.systemStatusEnabled,
     todo: settings.todoEnabled,
     music: settings.musicEnabled,
     clipboard: clipboardEnabled,
@@ -47,7 +48,7 @@ export function useIslandFeatures({
     ntfy: true,
     agents: settings.agentStatusEnabled,
     translation: settings.translationEnabled && settings.translationTarget === "island",
-  }), [clipboardEnabled, qqEnabled, settings.agentStatusEnabled, settings.mailEnabled, settings.musicEnabled, settings.shelfEnabled, settings.todoEnabled, settings.translationEnabled, settings.translationTarget, wechatEnabled]);
+  }), [clipboardEnabled, qqEnabled, settings.agentStatusEnabled, settings.mailEnabled, settings.musicEnabled, settings.shelfEnabled, settings.systemStatusEnabled, settings.todoEnabled, settings.translationEnabled, settings.translationTarget, wechatEnabled]);
 
   useEffect(() => {
     const next = resolveIslandPage(page, features);

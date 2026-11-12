@@ -30,7 +30,7 @@ pub struct SourceStats {
 struct ListenerContext {
     message: u32,
     executable: String,
-    callback: Box<dyn FnMut(ReminderSignal)>,
+    callback: Box<dyn FnMut(ReminderSignal, Option<HWND>)>,
     stats: SourceStats,
 }
 
@@ -143,7 +143,7 @@ impl WindowMessages for ReminderWindow {
                     {
                         return;
                     }
-                    (context.callback)(signal);
+                    (context.callback)(signal, Some(HWND(target.0 as *mut _)));
                 }
                 Err(()) => context.stats.metadata_errors += 1,
                 Ok(false) => {}
@@ -161,7 +161,7 @@ pub struct ReminderListener {
 impl ReminderListener {
     pub fn new(
         executable: PathBuf,
-        callback: impl FnMut(ReminderSignal) + 'static,
+        callback: impl FnMut(ReminderSignal, Option<HWND>) + 'static,
     ) -> Result<Self, String> {
         if CONTEXT.with(|slot| slot.borrow().is_some()) {
             return Err("微信提醒监听器已在此线程运行。".into());

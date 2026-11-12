@@ -1,5 +1,6 @@
 //! WeChat reminders: watches WeChat's tray flash and restores its window on request.
 
+mod content;
 mod source;
 
 #[cfg(test)]
@@ -15,7 +16,6 @@ use std::{
 use tauri::{AppHandle, Emitter, Manager};
 use windows::Win32::Foundation::HWND;
 
-
 use crate::win32;
 
 static SERVICE: OnceLock<Arc<ReminderService>> = OnceLock::new();
@@ -28,6 +28,12 @@ pub struct ReminderSnapshot {
     status: String,
     pending: bool,
     last_attention_at: Option<u64>,
+    /// The sender of the most recent unread conversation, read from WeChat's
+    /// window when a flash is caught. `None` until the first message is seen, or
+    /// when UI Automation cannot read the window.
+    last_sender: Option<String>,
+    /// The latest message text of that conversation; `None` alongside `last_sender`.
+    last_message: Option<String>,
     error: Option<String>,
 }
 
@@ -39,6 +45,8 @@ impl Default for ReminderSnapshot {
             status: "disabled".into(),
             pending: false,
             last_attention_at: None,
+            last_sender: None,
+            last_message: None,
             error: None,
         }
     }
@@ -167,7 +175,7 @@ pub fn set_wechat_reminders_enabled(enabled: bool) -> Result<ReminderSnapshot, S
     Ok(snapshot)
 }
 
-fn signal(service: &ReminderService, generation: u64, event: ReminderSignal) {
+fn signal(service: &ReminderService, generation: u64, event: ReminderSignal, window: Option<HWND>) {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
@@ -176,9 +184,36 @@ fn signal(service: &ReminderService, generation: u64, event: ReminderSignal) {
         let Ok(mut state) = service.state.lock() else {
             return;
         };
-        if !state.apply(generation, event, now) {
+        if !state.snapshot.enabled || state.generation != generation {
             return;
         }
+        // `apply` only reports the pending edge. A second message arriving while
+        // the first is still unread must still refresh the preview text, so the
+        // content read doubles as a "new message" detector here.
+        let changed = state.apply(generation, event, now);
+        let mut refreshed = false;
+        if matches!(event, ReminderSignal::Attention) {
+            if let Some(handle) = window {
+                if let Some((sender, message)) = content::read_latest_message(handle) {
+                    let different = state.snapshot.last_sender.as_deref() != Some(sender.as_str())
+                        || state.snapshot.last_message.as_deref() != Some(message.as_str());
+                    state.snapshot.last_sender = Some(sender);
+                    state.snapshot.last_message = Some(message);
+                    if different {
+                        refreshed = true;
+                        // Restarts the island preview for a genuinely new message.
+                        state.snapshot.last_attention_at = Some(now);
+                    }
+                }
+            }
+        } else if matches!(event, ReminderSignal::Activated) {
+            state.snapshot.last_sender = None;
+            state.snapshot.last_message = None;
+        }
+        if !changed && !refreshed {
+            return;
+        }
+        state.snapshot.revision += 1;
         state.snapshot.clone()
     };
     publish(service, snapshot);
@@ -222,8 +257,8 @@ fn monitor(service: Arc<ReminderService>, receiver: mpsc::Receiver<()>) {
         }
         let callback_service = service.clone();
         let listener = installed_executable().and_then(|executable| {
-            ReminderListener::new(executable, move |event| {
-                signal(&callback_service, generation, event)
+            ReminderListener::new(executable, move |event, window| {
+                signal(&callback_service, generation, event, window)
             })
         });
         match listener {

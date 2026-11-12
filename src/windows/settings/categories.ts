@@ -9,12 +9,16 @@ export const SETTINGS_CATEGORIES = [
   "messages",
   "agents",
   "agentConnect",
+  "system",
+  "ntfy",
+  "wechatContent",
+  "agentProviders",
   "about",
 ] as const;
 
 export type SettingsCategory = (typeof SETTINGS_CATEGORIES)[number];
 
-export type SettingsGroup = "basics" | "features" | "agents";
+export type SettingsGroup = "basics" | "features" | "agents" | "extensions";
 
 /**
  * Sidebar sections: app-wide settings, one page per module (QQ, WeChat and Mail share Messages,
@@ -25,6 +29,8 @@ export const SETTINGS_GROUPS: readonly { label: SettingsGroup | null; categories
   { label: "basics", categories: ["general", "appearance"] },
   { label: "features", categories: ["todos", "music", "translation", "clipboard", "messages"] },
   { label: "agents", categories: ["agents", "agentConnect"] },
+  /** Everything added on top of the upstream app lives here, in one place. */
+  { label: "extensions", categories: ["system", "ntfy", "wechatContent", "agentProviders"] },
   { label: null, categories: ["about"] },
 ];
 
@@ -40,6 +46,9 @@ const MERGED_CATEGORIES: Readonly<Record<string, SettingsCategory>> = {
   agentAlerts: "agents",
   sounds: "agents",
   agentApprovals: "agents",
+  systemStatus: "system",
+  wechatContent: "wechatContent",
+  aiProviders: "agentProviders",
 };
 
 /** The page a category name opens, old names included; null when there is no such page. */

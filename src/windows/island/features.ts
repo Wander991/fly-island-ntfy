@@ -3,6 +3,8 @@ import type { IslandPage } from "./types";
 
 /** Which modules are switched on; an off module is hidden on the island. */
 export type IslandFeatures = {
+  /** The System status page (PC metrics and built-in tool launchers). */
+  system: boolean;
   todo: boolean;
   music: boolean;
   clipboard: boolean;
@@ -18,7 +20,7 @@ export type IslandFeatures = {
   translation: boolean;
 };
 
-const PAGE_ORDER: IslandPage[] = ["todo", "music", "clipboard", "shelf", "qq", "agents", "translation"];
+const PAGE_ORDER: IslandPage[] = ["system", "agents", "music", "todo", "shelf", "clipboard", "qq", "translation"];
 const SOURCE_ORDER: MessageSource[] = ["qq", "wechat", "qqMail"];
 
 export function isPageEnabled(page: IslandPage, features: IslandFeatures): boolean {

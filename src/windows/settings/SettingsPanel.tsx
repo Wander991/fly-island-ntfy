@@ -12,11 +12,16 @@ import { SETTINGS_FOCUS_STORAGE_KEY, takeFocusRequest } from "./storage";
 import { TodosSettingsPage } from "./TodosSettingsPage";
 import { TranslationSettingsPage } from "./TranslationSettingsPage";
 import { AboutSettingsPage } from "./AboutSettingsPage";
+import { SystemStatusSettingsPage } from "./SystemStatusSettingsPage";
+import { NtfySettingsPage } from "./NtfySettingsPage";
+import { WeChatContentSettingsPage } from "./WeChatContentSettingsPage";
+import { AgentProvidersSettingsPage } from "./AgentProvidersSettingsPage";
 import { DEFAULT_SETTINGS, withAppearanceFrom } from "../../features/appearance/settings";
 import { ResetAppearanceButton } from "../../features/appearance/ResetAppearanceButton";
 import type { IslandSettings } from "../../features/appearance/types";
 import type { QQNotificationsController } from "../../features/messages/qq-notifications/QQNotifications";
 import type { WeChatRemindersController } from "../../features/messages/wechat/WeChatReminders";
+import type { NtfyController } from "../../features/ntfy/useNtfy";
 import { useSaveDirectorySetting } from "../../features/todos/useSaveDirectorySetting";
 import { useLocale } from "../../i18n";
 
@@ -29,6 +34,7 @@ export function SettingsPanel({
   onSettingsChange,
   qqNotifications,
   wechatReminders,
+  ntfy,
   detached,
   onDetachedChange,
   onContentHeight,
@@ -37,6 +43,7 @@ export function SettingsPanel({
   onSettingsChange: (settings: IslandSettings | ((current: IslandSettings) => IslandSettings)) => void;
   qqNotifications: QQNotificationsController;
   wechatReminders: WeChatRemindersController;
+  ntfy: NtfyController;
   /** Whether settings open in their own window (General → Separate settings window). */
   detached: boolean;
   onDetachedChange: (detached: boolean) => void;
@@ -62,6 +69,10 @@ export function SettingsPanel({
     if (section === "music") setCategory("music");
     if (section === "mail") setCategory("messages");
     if (section === "updates") setCategory("about");
+    if (section === "system") setCategory("system");
+    if (section === "ntfy") setCategory("ntfy");
+    if (section === "wechatContent") setCategory("wechatContent");
+    if (section === "agentProviders") setCategory("agentProviders");
   }, [focusSavePath]);
 
   useEffect(() => {
@@ -112,6 +123,10 @@ export function SettingsPanel({
       {category === "music" && <MusicSettingsPage settings={settings} onSettingsChange={setSettings} />}
       {category === "agents" && <AgentSettingsPage settings={settings} onSettingsChange={setSettings} onOpenConnect={() => setCategory("agentConnect")} />}
       {category === "agentConnect" && <AgentConnectSettingsPage />}
+      {category === "system" && <SystemStatusSettingsPage settings={settings} onSettingsChange={setSettings} />}
+      {category === "ntfy" && <NtfySettingsPage controller={ntfy} />}
+      {category === "wechatContent" && <WeChatContentSettingsPage settings={settings} onSettingsChange={setSettings} />}
+      {category === "agentProviders" && <AgentProvidersSettingsPage settings={settings} onSettingsChange={setSettings} />}
       {category === "about" && <AboutSettingsPage />}
     </LayoutEditor>
   );

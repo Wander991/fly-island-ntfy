@@ -138,6 +138,16 @@
   touch-action: none;
 }
 
+.dot-button--system {
+  background: #ff9a76;
+  box-shadow: 0 0 12px rgba(255, 154, 118, 0.46);
+}
+
+.dot-button--agents {
+  background: #a3e635;
+  box-shadow: 0 0 12px rgba(163, 230, 53, 0.42);
+}
+
 .dot-button--todo {
   background: var(--color-accent);
   box-shadow: 0 0 12px rgba(116, 214, 255, 0.48);

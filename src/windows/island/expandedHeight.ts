@@ -26,6 +26,8 @@ export function getShelfExpandedHeight(items: number) {
     : (layout === "rows" ? Math.min(SHELF_MAX_ROWS, Math.ceil(items / 2)) * SHELF_ROW_PITCH - 6 : SHELF_TILE_ROW) + SHELF_BAR;
   return SHELF_ISLAND_CHROME + SHELF_PANEL_PADDING + content;
 }
+// The System page: network/rings row, clock and date row, then the tool buttons.
+const SYSTEM_EXPANDED_ISLAND_HEIGHT = 372;
 // Header, direction bar, a few lines of source, the result and the action row.
 const TRANSLATION_EXPANDED_ISLAND_HEIGHT = 420;
 // Settings fit their open page (useSettingsPageHeight): the island's padding, header and gap
@@ -102,6 +104,8 @@ export function getExpandedIslandHeight({
 
   return page === "settings"
     ? getSettingsExpandedHeight(settingsContentHeight)
+    : page === "system"
+    ? Math.min(SYSTEM_EXPANDED_ISLAND_HEIGHT, maxPanelHeight)
     : page === "todo"
     ? isTodoArchivePage
       ? TODO_ARCHIVE_EXPANDED_ISLAND_HEIGHT
@@ -114,9 +118,9 @@ export function getExpandedIslandHeight({
       : page === "translation"
         ? Math.min(TRANSLATION_EXPANDED_ISLAND_HEIGHT, maxPanelHeight)
       : page === "agents"
-        ? agentAlertRowHeight !== undefined
+        ? 34 + (agentAlertRowHeight !== undefined
           ? getAgentAlertExpandedHeight(agentAlertRowHeight)
-          : getAgentPageExpandedHeight(agentVisibleRows, agentUsageLines, agentSessionView)
+          : getAgentPageExpandedHeight(agentVisibleRows, agentUsageLines, agentSessionView))
       : page === "clipboard"
         ? getClipboardExpandedHeight(clipboardVisibleRows)
         : Math.min(messagePanelHeight(messageSource, isReadingMail), maxPanelHeight);

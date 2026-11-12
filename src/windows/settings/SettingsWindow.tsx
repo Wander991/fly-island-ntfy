@@ -3,6 +3,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useIslandSettings } from "../../features/appearance/useIslandSettings";
 import { useQQNotifications } from "../../features/messages/qq-notifications/QQNotifications";
 import { useWeChatReminders } from "../../features/messages/wechat/WeChatReminders";
+import { useNtfy } from "../../features/ntfy/useNtfy";
 import { useTranslation } from "../../i18n";
 import { dockSettingsWindow, showSettingsWindow } from "./api";
 import { saveDetachedSettings } from "./storage";
@@ -16,6 +17,7 @@ export function SettingsWindow() {
   const [settings, setSettings] = useIslandSettings();
   const qqNotifications = useQQNotifications(false);
   const wechatReminders = useWeChatReminders(false);
+  const ntfy = useNtfy(false);
   const detached = useSettingsPresentation();
 
   // The window opens hidden and is shown once the page has rendered, so it never shows
@@ -67,6 +69,7 @@ export function SettingsWindow() {
         onSettingsChange={setSettings}
         qqNotifications={qqNotifications}
         wechatReminders={wechatReminders}
+        ntfy={ntfy}
         detached={detached}
         onDetachedChange={(value) => void changePresentation(value)}
       />

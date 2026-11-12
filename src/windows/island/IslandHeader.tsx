@@ -60,7 +60,14 @@ export function IslandHeader({
   const messageBadgeLabel = t.messages.badge(qqNotificationCount, wechatPending);
   // The page dots, in the order the user dragged them into; a dot can be dragged sideways.
   const dots = pageOrder.filter((dot) => features[dot]);
-  const dotLabels = { todo: t.island.todoList, music: t.island.music, clipboard: t.island.clipboardHistory, shelf: t.island.shelf };
+  const dotLabels: Record<PageDot, string> = {
+    system: t.island.pageNames.system,
+    agents: t.island.agentPage,
+    todo: t.island.todoList,
+    music: t.island.music,
+    clipboard: t.island.clipboardHistory,
+    shelf: t.island.shelf,
+  };
   const reorderDots = useCallback(
     (next: PageDot[]) => onPageOrderChange([...next, ...pageOrder.filter((dot) => !next.includes(dot))]),
     [onPageOrderChange, pageOrder],

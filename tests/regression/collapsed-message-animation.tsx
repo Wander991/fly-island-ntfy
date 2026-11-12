@@ -11,11 +11,13 @@ import type { IslandMode } from "../../src/windows/island/types";
 import { useQQNotifications } from "../../src/features/messages/qq-notifications/QQNotifications";
 import { useWeChatReminders } from "../../src/features/messages/wechat/WeChatReminders";
 import { useMail } from "../../src/features/messages/mail/MailPanel";
+import type { NtfyController } from "../../src/features/ntfy/useNtfy";
 import type { MailSnapshot } from "../../src/features/messages/mail/api";
 import type { MessageSource } from "../../src/features/messages/messagePreview";
 import type { MediaState } from "../../src/features/media/api";
 import type { AgentSession } from "../../src/features/agent-status/session";
 
+const NTFY_STUB = { preview: null, previewReceivedAt: null } as unknown as NtfyController;
 Object.assign(globalThis, { isTauri: true, IS_REACT_ACT_ENVIRONMENT: true });
 const automated = new URLSearchParams(location.search).has("test");
 // Same values as MediaState::empty() in src-tauri/src/media_control/session.rs.
@@ -89,14 +91,14 @@ function Fixture() {
   changeMode = setMode; changeTucked = setTucked; changeCount = setCount; changeTask = setTask;
   changeWidth = setWidth; changeTitle = setTitle; changeFont = setPixel; changeAgent = setAgent;
   return <div className={`stage${pixel ? " stage--font-pixel" : ""}`} style={{ "--collapsed-island-width": `${width}px` } as CSSProperties}>
-    <IslandShell qqNotifications={qq} wechatReminders={wechat} qqMail={qqMail}
+    <IslandShell qqNotifications={qq} wechatReminders={wechat} qqMail={qqMail} ntfy={NTFY_STUB} wechatContentEnabled={false}
       mode={mode} page="todo" isTucked={tucked} isDetached={true} showTitle={title}
       showCollapsedText={true} collapsedTaskTitle={task ?? `剩余${count}个待办`} collapsedTodoCount={null} agentSession={agent} activeAgentSessionCount={agentCount}
       collapsedItem={agent ? "agent" : "todo"} collapsedLayout={["text", "mail", "shelf", "music", "agents"]} collapsedCover={null} lyricsSettings={{ lyricsFolder: "", lyricsOnline: false, lyricsOffsetMs: 0 }}
       pageOrder={["todo", "music", "clipboard", "shelf"]} onPageOrderChange={() => {}}
       appearanceMode="classic" nativeGlassState="disabled" agentVisualState="idle" agentStatusLabel="AI Agent 空闲或已完成"
       mediaState={UNAVAILABLE_MEDIA}
-      features={{ todo: true, music: true, clipboard: true, shelf: true, qq: true, wechat: true, qqMail: true, agents: agentsEnabled, translation: false }}
+      features={{ system: true, todo: true, music: true, clipboard: true, shelf: true, qq: true, wechat: true, qqMail: true, ntfy: true, agents: agentsEnabled, translation: false }}
       shelfCount={null}
       onOpenPage={(page) => { openedPage = page; }} onOpenMessages={(source) => { openedPage = source; }}
       onPageChange={() => {}} onWindowDragStart={() => {}} onCollapse={() => setMode("collapsed")}

@@ -7,7 +7,7 @@ import { MESSAGE_PREVIEW_MS } from "../messagePreview";
 
 const EMPTY_SNAPSHOT: ReminderSnapshot = {
   revision: 0, enabled: false, status: "disabled", pending: false,
-  lastAttentionAt: null, error: null,
+  lastAttentionAt: null, lastSender: null, lastMessage: null, error: null,
 };
 
 export function useWeChatReminders(canPreview: boolean) {

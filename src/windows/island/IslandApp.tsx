@@ -46,11 +46,11 @@ const NO_TODOS: TodoItem[] = [];
  */
 export function IslandApp() {
   const t = useTranslation();
-  const navigation = useIslandNavigation();
-  const { mode, isTucked, page, setPage, collapseIsland, tuckIsland, revealIsland, minimizeToEdge, openIslandPage, toggleClipboardHistory } = navigation;
   const [settings, setSettings] = useIslandSettings();
+  const navigation = useIslandNavigation(settings.defaultPage);
+  const { mode, isTucked, page, setPage, collapseIsland, tuckIsland, revealIsland, minimizeToEdge, openIslandPage, toggleClipboardHistory } = navigation;
   const detachedSettings = useSettingsPresentation();
-  const { openSettings, changePresentation } = useSettingsNavigation(openIslandPage, setPage);
+  const { openSettings, changePresentation } = useSettingsNavigation(openIslandPage, setPage, settings.defaultPage);
   const { settingsContentHeight, reportSettingsHeight } = useSettingsPageHeight();
   // Quiet while a full-screen app (usually a game) is in front, if game mode asks for it.
   const game = useGameMode(settings, { mode, isTucked, collapseIsland, tuckIsland, revealIsland });
@@ -184,6 +184,7 @@ export function IslandApp() {
         qqNotifications={qqNotifications}
         wechatReminders={wechatReminders}
         ntfy={ntfy}
+        wechatContentEnabled={settings.wechatContentEnabled}
         onOpenMessages={openMessages}
         mode={mode}
         page={page}

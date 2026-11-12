@@ -1,0 +1,142 @@
+/* Shared bits for the four "扩展功能" settings pages. */
+.ext-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  padding: 10px 12px 12px;
+}
+
+.ext-tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text-2, #9aa6b8);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.ext-tool-chip > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ext-tool-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.ext-tool-chip.is-on {
+  border-color: rgba(116, 214, 255, 0.45);
+  background: rgba(116, 214, 255, 0.12);
+  color: var(--color-page-text, #f2f4f8);
+}
+
+.ext-note {
+  margin: 0;
+  color: var(--text-2, #9aa6b8);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.ext-code {
+  display: block;
+  margin: 6px 0;
+  padding: 8px 10px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  color: #b6e3ff;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.55;
+  white-space: pre;
+}
+
+.ext-ntfy-host {
+  height: 380px;
+  min-height: 0;
+  margin-top: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ext-provider-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 12px;
+}
+
+.ext-provider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ext-provider-row .settings-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.ext-provider-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.ext-provider-add .settings-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.ext-button {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-page-text, #f2f4f8);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ext-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ext-button--danger {
+  color: #ff9b9b;
+}
+
+.ext-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px 12px;
+  font-size: 12px;
+}
+
+.ext-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-2, #9aa6b8);
+}
+
+.ext-status-row strong {
+  color: var(--color-page-text, #f2f4f8);
+  font-weight: 500;
+}

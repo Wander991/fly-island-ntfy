@@ -16,7 +16,7 @@ function reportFailure(error: unknown) {
  * General → Separate settings window is on. Answers the header button, the island's own
  * links (OPEN_SETTINGS_PAGE_EVENT), and the tray and translation window (a Tauri event).
  */
-export function useSettingsNavigation(openIslandPage: (page: IslandPage) => void, setPage: (page: IslandPage) => void) {
+export function useSettingsNavigation(openIslandPage: (page: IslandPage) => void, setPage: (page: IslandPage) => void, defaultPage: IslandPage = "system") {
   const openSettings = useCallback(() => {
     if (loadDetachedSettings()) void openStandaloneSettingsWindow().catch(reportFailure);
     else openIslandPage("settings");
@@ -27,12 +27,12 @@ export function useSettingsNavigation(openIslandPage: (page: IslandPage) => void
     if (!saveDetachedSettings(detached) || !detached) return;
     try {
       await openStandaloneSettingsWindow();
-      setPage("todo");
+      setPage(defaultPage);
     } catch (error) {
       saveDetachedSettings(false);
       reportFailure(error);
     }
-  }, [setPage]);
+  }, [defaultPage, setPage]);
 
   useEffect(() => {
     window.addEventListener(OPEN_SETTINGS_PAGE_EVENT, openSettings);

@@ -49,8 +49,29 @@ export function nearestExpandedSize(scale: number): ExpandedSize {
 export const COLLAPSED_ITEMS: readonly CollapsedItem[] = ["agent", "lyrics", "todo"];
 /** The collapsed island's layout as it always was: the text, then the icons on its right. */
 export const COLLAPSED_SLOTS: readonly CollapsedSlot[] = ["text", "mail", "shelf", "music", "agents"];
-/** The header's page dots in their default order. */
-export const PAGE_DOTS: readonly PageDot[] = ["todo", "music", "clipboard", "shelf"];
+/**
+ * The header's page dots in their default order. The System status page is first
+ * (and the landing page), followed by the AI Agent, music, todos and files, as
+ * requested; clipboard history stays available last. The user can drag them.
+ */
+export const PAGE_DOTS: readonly PageDot[] = ["system", "agents", "music", "todo", "shelf", "clipboard"];
+/** The page the island opens on first. */
+export const DEFAULT_PAGE: PageDot = "system";
+/** Built-in Windows tools offered on the System page (all are whitelisted in Rust). */
+export const ALL_SYSTEM_TOOLS = [
+  "taskManager", "resourceMonitor", "deviceManager", "diskManagement", "controlPanel",
+  "networkConnections", "systemProperties", "systemInfo", "diskCleanup", "settings",
+  "calculator", "notepad", "snippingTool", "terminal", "eventViewer", "services",
+] as const;
+export type SystemToolId = (typeof ALL_SYSTEM_TOOLS)[number];
+/** Shown by default so the row stays a single line. */
+export const DEFAULT_SYSTEM_TOOLS: readonly SystemToolId[] = [
+  "taskManager", "resourceMonitor", "deviceManager", "settings",
+  "networkConnections", "diskCleanup", "calculator", "terminal",
+];
+/** Extra AI Agents that can report to the local bridge. */
+export const DEFAULT_AGENT_PROVIDER_IDS = ["workbuddy", "doubao", "marvis"] as const;
+export const SYSTEM_REFRESH_SECONDS = [1, 2, 3, 5, 10] as const;
 
 /** `value` when it is one of `allowed`, else `fallback`: a saved choice from an older or newer build. */
 export function oneOf<T>(allowed: readonly T[], value: unknown, fallback: T): T {

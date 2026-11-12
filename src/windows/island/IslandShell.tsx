@@ -27,6 +27,8 @@ type IslandShellProps = {
   qqNotifications: QQNotificationsController;
   wechatReminders: WeChatRemindersController;
   ntfy: NtfyController;
+  /** Off: WeChat previews keep the generic "new message" wording. */
+  wechatContentEnabled: boolean;
   onOpenMessages: (source: MessageSource) => void;
   mode: IslandMode;
   page: IslandPage;
@@ -84,6 +86,7 @@ export function IslandShell({
   qqNotifications,
   wechatReminders,
   ntfy,
+  wechatContentEnabled,
   onOpenMessages,
   mode,
   page,
@@ -137,7 +140,12 @@ export function IslandShell({
   const [latestPreviewAt, setLatestPreviewAt] = useState(0);
   const preview = latestMessagePreview([
     qqPreview ? { ...qqPreview, source: "qq", receivedAt: qqNotifications.previewReceivedAt ?? 0 } : null,
-    wechatPreviewAt !== null ? { source: "wechat", title: t.messages.wechat, body: t.messages.newReminder, receivedAt: wechatPreviewAt } : null,
+    wechatPreviewAt !== null ? {
+      source: "wechat",
+      title: wechatContentEnabled ? wechatReminders.snapshot.lastSender ?? "" : "",
+      body: wechatContentEnabled ? wechatReminders.snapshot.lastMessage ?? t.messages.newReminder : t.messages.newReminder,
+      receivedAt: wechatPreviewAt,
+    } : null,
     qqMail.preview ? { source: "qqMail", title: qqMail.preview.sender, body: qqMail.preview.subject, receivedAt: qqMail.previewReceivedAt ?? 0 } : null,
     // ntfy is a first-class message source: the topic acts as the sender, the
     // message body as the content, rendered inside the island like QQ/WeChat.

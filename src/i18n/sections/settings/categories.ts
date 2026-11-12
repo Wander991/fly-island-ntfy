@@ -4,6 +4,7 @@ export type SettingsCategoriesText = {
     basics: string;
     features: string;
     agents: string;
+    extensions: string;
   };
   general: string;
   appearance: string;
@@ -21,6 +22,10 @@ export type SettingsCategoriesText = {
   /** The AI Agent group's pages. */
   agents: string;
   agentConnect: string;
+  system: string;
+  ntfy: string;
+  wechatContent: string;
+  agentProviders: string;
   about: string;
 };
 
@@ -30,6 +35,7 @@ export const zhCN: SettingsCategoriesText = {
     basics: "基础",
     features: "功能",
     agents: "AI Agent",
+    extensions: "扩展功能",
   },
   general: "通用",
   appearance: "外观",
@@ -43,6 +49,10 @@ export const zhCN: SettingsCategoriesText = {
   shelf: "文件中转",
   agents: "会话与提醒",
   agentConnect: "连接",
+  system: "系统状态",
+  ntfy: "ntfy 通知",
+  wechatContent: "微信内容",
+  agentProviders: "Agent 接入",
   about: "关于",
 };
 
@@ -52,6 +62,7 @@ export const en: SettingsCategoriesText = {
     basics: "Basics",
     features: "Features",
     agents: "AI Agent",
+    extensions: "Extensions",
   },
   general: "General",
   appearance: "Appearance",
@@ -65,5 +76,9 @@ export const en: SettingsCategoriesText = {
   shelf: "File shelf",
   agents: "Sessions & alerts",
   agentConnect: "Connection",
+  system: "System status",
+  ntfy: "ntfy notifications",
+  wechatContent: "WeChat content",
+  agentProviders: "Agent providers",
   about: "About",
 };

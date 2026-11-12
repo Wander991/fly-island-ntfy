@@ -8,9 +8,11 @@ import { useMail, type MailController, sanitizeMailHtml } from "../../src/featur
 import type { MailContent, MailSnapshot } from "../../src/features/messages/mail/api";
 import { useQQNotifications } from "../../src/features/messages/qq-notifications/QQNotifications";
 import { useWeChatReminders } from "../../src/features/messages/wechat/WeChatReminders";
+import type { NtfyController } from "../../src/features/ntfy/useNtfy";
 import { MessagesPanel, messagePanelHeight, type MessageView } from "../../src/features/messages/Messages";
 import "../../src/windows/island/IslandApp.css";
 
+const NTFY_STUB = {} as NtfyController;
 Object.assign(globalThis, { isTauri: true, IS_REACT_ACT_ENVIRONMENT: true });
 const params = new URLSearchParams(location.search);
 const state = params.get("state") ?? "qq";
@@ -56,7 +58,7 @@ function Fixture() {
   const wechatReminders = useWeChatReminders(false);
   [view, setView] = useState<MessageView>(["reader", "html", "loading", "error", "auth", "mail", "disconnected"].includes(state) ? "qqMail" : ["wechat", "wechatError"].includes(state) ? "wechat" : "qq");
   const height = messagePanelHeight(view, mail.wantsTallPanel);
-  return <section className="message-fixture" style={{ height }}><header className="fixture-heading">fly-island<span>消息</span></header><div className="message-panel"><MessagesPanel source={view} enabledSources={{ qq: true, wechat: true, qqMail: true }} onSourceChange={next => { mail.closeReader(); setView(next); }} onOpenMailSettings={() => calls.push({ command: "open_mail_settings", args: {} })} qqMail={mail} qqNotifications={qqNotifications} wechatReminders={wechatReminders} /></div></section>;
+  return <section className="message-fixture" style={{ height }}><header className="fixture-heading">fly-island<span>消息</span></header><div className="message-panel"><MessagesPanel source={view} enabledSources={{ qq: true, wechat: true, qqMail: true, ntfy: true }} onSourceChange={next => { mail.closeReader(); setView(next); }} onOpenMailSettings={() => calls.push({ command: "open_mail_settings", args: {} })} qqMail={mail} qqNotifications={qqNotifications} wechatReminders={wechatReminders} ntfy={NTFY_STUB} /></div></section>;
 }
 
 const root = createRoot(document.getElementById("fixture")!);

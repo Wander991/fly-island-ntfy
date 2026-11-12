@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ClipboardList, Info, Languages, ListTodo, MessageCircle, MessagesSquare, Music, Palette, Plug, SlidersHorizontal, type LucideIcon } from "lucide-react";
+import { BellRing, Bot, ClipboardList, Info, Languages, ListTodo, MessageCircle, MessageSquareText, MessagesSquare, Monitor, Music, Palette, Plug, SlidersHorizontal, type LucideIcon } from "lucide-react";
 import { useTranslation } from "../../i18n";
 import { SETTINGS_GROUPS, type SettingsCategory } from "./categories";
 import "./SettingsSidebar.css";
@@ -14,6 +14,10 @@ const CATEGORY_ICONS: Record<SettingsCategory, LucideIcon> = {
   translation: Languages,
   agents: MessagesSquare,
   agentConnect: Plug,
+  system: Monitor,
+  ntfy: BellRing,
+  wechatContent: MessageSquareText,
+  agentProviders: Bot,
   about: Info,
 };
 

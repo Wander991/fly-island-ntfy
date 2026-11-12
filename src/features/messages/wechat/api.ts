@@ -8,6 +8,9 @@ export type ReminderSnapshot = {
   status: "disabled" | "waiting" | "listening" | "error";
   pending: boolean;
   lastAttentionAt: number | null;
+  /** Read from WeChat's accessibility tree on a new-message flash, when available. */
+  lastSender: string | null;
+  lastMessage: string | null;
   error: string | null;
 };
 

@@ -1,4 +1,5 @@
 mod agent_approval;
+mod agent_providers;
 mod agent_status;
 mod clipboard_history;
 mod file_shelf;
@@ -69,6 +70,9 @@ pub fn run() {
             if let Err(error) = file_shelf::init(app.handle()) {
                 eprintln!("failed to initialize the file shelf: {error}");
             }
+            if let Err(error) = agent_providers::init(app.handle()) {
+                eprintln!("failed to start the AI Agent bridge: {error}");
+            }
             if let Err(error) = agent_approval::init(app.handle()) {
                 eprintln!("failed to start the agent approval endpoint: {error}");
             }
@@ -110,6 +114,7 @@ pub fn run() {
             island;
             system;
             agent_status;
+            agent_providers;
             agent_approval;
             media_control;
             lyrics;
