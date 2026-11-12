@@ -1,3 +1,5 @@
+import { MESSAGE_PREVIEW_MS } from "./messagePreview";
+
 export type QQPreviewTiming = {
   burstStartedAt: number;
   lastArrivalAt: number;
@@ -14,6 +16,6 @@ export function nextQQPreview(
   const deadline = burstStartedAt + 10_000;
   return {
     timing: { burstStartedAt, lastArrivalAt: now },
-    expiresAt: now < deadline ? Math.min(now + 5_000, deadline) : null,
+    expiresAt: now < deadline ? Math.min(now + MESSAGE_PREVIEW_MS, deadline) : null,
   };
 }

@@ -11,8 +11,9 @@ import {
   setNtfyTopicMuted,
   type NtfySnapshot,
 } from "./api";
+import { MESSAGE_PREVIEW_MS } from "../messages/messagePreview";
 
-const PREVIEW_MS = 8000;
+const PREVIEW_MS = MESSAGE_PREVIEW_MS;
 
 const EMPTY_SNAPSHOT: NtfySnapshot = {
   revision: 0,

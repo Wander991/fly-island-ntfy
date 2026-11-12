@@ -11,6 +11,13 @@ export type MessagePreview = {
 
 export const MESSAGE_SOURCE_LABELS: Record<MessageSource, string> = zhCN.messages.sourceLabels;
 
+/**
+ * How long a message preview stays on the collapsed island. Every source (QQ,
+ * WeChat, mail, ntfy) shares this so the island peeks out for the same beat and
+ * slides back the moment the preview ends. WeChat's original reminder used 5s.
+ */
+export const MESSAGE_PREVIEW_MS = 5_000;
+
 export function messagePreviewText(preview: MessagePreview, copy: Translations["messages"] = zhCN.messages): string {
   if (preview.source === "wechat") return copy.wechatPreview;
   if (preview.source === "qqMail") return preview.body.trim() || copy.newMail;

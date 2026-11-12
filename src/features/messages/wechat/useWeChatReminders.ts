@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { isTauri } from "@tauri-apps/api/core";
 import { launchWeChat, listenWeChatReminderChanged, setWeChatRemindersEnabled, type ReminderSnapshot } from "./api";
 import { isWeChatRemindersEnabled, saveWeChatRemindersEnabled } from "./storage";
+import { MESSAGE_PREVIEW_MS } from "../messagePreview";
 
 const EMPTY_SNAPSHOT: ReminderSnapshot = {
   revision: 0, enabled: false, status: "disabled", pending: false,
@@ -65,7 +66,7 @@ export function useWeChatReminders(canPreview: boolean) {
   useEffect(() => {
     if (previewReceivedAt === null) return;
     const timer = window.setTimeout(() => setPreviewReceivedAt(null),
-      Math.max(0, previewReceivedAt + 5_000 - Date.now()));
+      Math.max(0, previewReceivedAt + MESSAGE_PREVIEW_MS - Date.now()));
     return () => window.clearTimeout(timer);
   }, [previewReceivedAt]);
 
