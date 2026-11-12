@@ -4,6 +4,7 @@ export type NtfyText = {
   disable: string;
   status: (status: string) => string;
   server: string;
+  serversHint: string;
   topics: string;
   topicsHint: string;
   token: string;
@@ -21,6 +22,9 @@ export type NtfyText = {
   mute: string;
   unmute: string;
   topicMuteHint: string;
+  muteSection: string;
+  noTopics: string;
+  recent: string;
 };
 
 export const zhCN: NtfyText = {
@@ -36,10 +40,11 @@ export const zhCN: NtfyText = {
           ? "连接错误"
           : "已停用",
   server: "服务器",
+  serversHint: "每行一个，或用逗号分隔；每个服务器都会订阅下面的全部 topic",
   topics: "订阅 topic",
   topicsHint: "每行一个，或用逗号分隔",
   token: "令牌",
-  tokenHint: "可选，Bearer 令牌；留空表示不需要鉴权",
+  tokenHint: "可选，Bearer 令牌；留空表示不需要鉴权（对所有服务器生效）",
   save: "保存",
   clear: "清空",
   openTopic: "打开 topic",
@@ -53,6 +58,9 @@ export const zhCN: NtfyText = {
   mute: "静音",
   unmute: "取消静音",
   topicMuteHint: "关闭某个订阅的弹窗提醒（仍保留在列表中）",
+  muteSection: "订阅的通知情况",
+  noTopics: "保存 topic 后，可在这里逐条设置是否提醒",
+  recent: "最近通知",
 };
 
 export const en: NtfyText = {
@@ -67,11 +75,12 @@ export const en: NtfyText = {
         : status === "error"
           ? "Connection error"
           : "Disabled",
-  server: "Server",
+  server: "Servers",
+  serversHint: "One per line, or comma-separated; every server subscribes to all topics below",
   topics: "Topics",
   topicsHint: "One per line, or comma-separated",
   token: "Token",
-  tokenHint: "Optional bearer token; leave blank for no auth",
+  tokenHint: "Optional bearer token; blank means no auth (applies to every server)",
   save: "Save",
   clear: "Clear",
   openTopic: "Open topic",
@@ -85,4 +94,7 @@ export const en: NtfyText = {
   mute: "Mute",
   unmute: "Unmute",
   topicMuteHint: "Turn off the popup alert for a subscription (kept in the list)",
+  muteSection: "Subscription alerts",
+  noTopics: "Save a topic first to configure its alert here",
+  recent: "Recent notifications",
 };

@@ -32,6 +32,9 @@ pub struct NtfyMessage {
     body: String,
     priority: i32,
     created_at: i64,
+    /// Server root this message arrived on, so opening the topic uses the
+    /// matching host even when several servers are configured.
+    server: String,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Serialize)]
@@ -151,11 +154,16 @@ fn start_tasks(service: &Arc<NtfyService>) {
     if !config.enabled {
         return;
     }
-    for topic in config.topics {
-        let service = service.clone();
-        let _ = tauri::async_runtime::spawn(async move {
-            sse::run(service, topic, generation).await;
-        });
+    // Every configured server subscribes to every configured topic.
+    for server in config.servers() {
+        for topic in &config.topics {
+            let service = service.clone();
+            let server = server.clone();
+            let topic = topic.clone();
+            let _ = tauri::async_runtime::spawn(async move {
+                sse::run(service, server, topic, generation).await;
+            });
+        }
     }
 }
 
@@ -364,7 +372,11 @@ pub fn set_ntfy_topic_muted(topic: String, muted: bool) -> Result<NtfySnapshot, 
 }
 
 #[tauri::command]
-pub fn open_ntfy_topic(app: AppHandle, topic: String) -> Result<(), String> {
+pub fn open_ntfy_topic(
+    app: AppHandle,
+    topic: String,
+    server: Option<String>,
+) -> Result<(), String> {
     let topic = topic.trim();
     if topic.is_empty()
         || topic.contains('/')
@@ -377,7 +389,13 @@ pub fn open_ntfy_topic(app: AppHandle, topic: String) -> Result<(), String> {
     }
     let service = service()?;
     let config = current_config(service.as_ref());
-    let url = format!("{}/{}", config.server.trim_end_matches('/'), topic);
+    // Only ever open a URL on a server the user configured; a message payload
+    // must never be able to make the opener launch an arbitrary address.
+    let base = server
+        .as_deref()
+        .map(|value| config.server_for(value))
+        .unwrap_or_else(|| config.servers()[0].clone());
+    let url = format!("{}/{}", base.trim_end_matches('/'), topic);
     app.opener()
         .open_url(&url, None::<&str>)
         .map_err(|error| format!("无法打开 ntfy topic：{error}"))

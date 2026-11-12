@@ -63,8 +63,7 @@
 .ntfy-panel__controls {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
 }
 
 .ntfy-field {
@@ -78,6 +77,7 @@
 .ntfy-field small {
   color: var(--text-3);
   font-size: 10px;
+  line-height: 1.45;
 }
 
 .ntfy-field input,
@@ -90,6 +90,7 @@
   border: 1px solid var(--color-white-a10);
   border-radius: var(--radius-md);
   font: inherit;
+  line-height: 1.5;
   resize: vertical;
 }
 
@@ -97,6 +98,7 @@
 .ntfy-field textarea:focus-visible,
 .ntfy-icon-button:focus-visible,
 .ntfy-panel__actions button:focus-visible,
+.ntfy-mute-row__toggle:focus-visible,
 .ntfy-item:focus-visible {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
@@ -129,13 +131,12 @@
   cursor: default;
 }
 
+/* Natural flow inside the single scroll container; no nested scrollbars. */
 .ntfy-panel__list {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-white-a16) transparent;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  border-top: 1px solid var(--color-white-a08);
 }
 
 .ntfy-item {
@@ -220,13 +221,32 @@
   background: var(--color-agent-idle);
 }
 
-/* Panel body used inside the messages page (beside QQ / WeChat / Email). */
+/* Panel body used inside the messages page (beside QQ / WeChat / Email).
+ * The island gives this panel a fixed height, so scrolling happens in one
+ * inner container instead of being clipped by the outer overflow: hidden. */
 .ntfy-panel-body {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   gap: var(--space-sm);
+  overflow: hidden;
+}
+
+.ntfy-panel-body > .message-sources,
+.ntfy-panel__status-row {
+  flex: 0 0 auto;
+}
+
+.ntfy-panel__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-white-a16) transparent;
+  padding-right: 2px;
 }
 
 .ntfy-panel__status-row {
@@ -240,11 +260,46 @@
   font-weight: 600;
 }
 
+.ntfy-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ntfy-section__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ntfy-section__title {
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ntfy-section__count {
+  min-width: 16px;
+  padding: 0 5px;
+  color: var(--text-3);
+  background: var(--color-white-a08);
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.ntfy-section__hint {
+  margin: 0;
+  color: var(--text-3);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
 .ntfy-mute-list {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin: 2px 0 4px;
   padding: 6px;
   background: var(--color-white-a04);
   border: 1px solid var(--color-white-a08);

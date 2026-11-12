@@ -10,7 +10,14 @@ use std::{
 const CHUNK_TIMEOUT: Duration = Duration::from_secs(35);
 const MAX_BACKOFF: Duration = Duration::from_secs(30);
 
-pub(super) async fn run(service: Arc<NtfyService>, topic: String, generation: u64) {
+/// One SSE stream: a single (server, topic) pair. With multiple servers the
+/// service spawns one of these per server x topic combination.
+pub(super) async fn run(
+    service: Arc<NtfyService>,
+    server: String,
+    topic: String,
+    generation: u64,
+) {
     let client = match build_client() {
         Ok(client) => client,
         Err(error) => {
@@ -27,7 +34,7 @@ pub(super) async fn run(service: Arc<NtfyService>, topic: String, generation: u6
         if !config.enabled {
             return;
         }
-        let url = format!("{}/{}/sse", config.server.trim_end_matches('/'), topic);
+        let url = format!("{}/{}/sse", server.trim_end_matches('/'), topic);
         let mut request = client.get(url.as_str());
         if let Some(token) = config.token.as_deref() {
             request = request.bearer_auth(token);
@@ -82,7 +89,7 @@ pub(super) async fn run(service: Arc<NtfyService>, topic: String, generation: u6
                 let line_bytes: Vec<u8> = buffer.drain(..=index).collect();
                 let line = String::from_utf8_lossy(&line_bytes);
                 let line = line.trim_end();
-                process_line(&service, &topic, line, &mut data_lines);
+                process_line(&service, &server, &topic, line, &mut data_lines);
             }
         }
         super::update_status(
@@ -105,6 +112,7 @@ fn build_client() -> Result<Client, String> {
 
 fn process_line(
     service: &Arc<NtfyService>,
+    server: &str,
     topic: &str,
     line: &str,
     data_lines: &mut Vec<String>,
@@ -115,7 +123,7 @@ fn process_line(
         if payload.trim().is_empty() {
             return;
         }
-        if let Some(message) = parse_message(&payload, topic) {
+        if let Some(message) = parse_message(&payload, topic, server) {
             super::push_message(service, message);
         }
         return;
@@ -128,7 +136,7 @@ fn process_line(
     }
 }
 
-fn parse_message(payload: &str, topic_fallback: &str) -> Option<NtfyMessage> {
+fn parse_message(payload: &str, topic_fallback: &str, server: &str) -> Option<NtfyMessage> {
     let value: Value = serde_json::from_str(payload).ok()?;
     let event = value
         .get("event")
@@ -178,6 +186,7 @@ fn parse_message(payload: &str, topic_fallback: &str) -> Option<NtfyMessage> {
         body,
         priority,
         created_at,
+        server: server.to_string(),
     })
 }
 

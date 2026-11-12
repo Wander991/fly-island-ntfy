@@ -170,9 +170,9 @@ export function useNtfy(canPreview: boolean) {
   );
 
   const openTopic = useCallback(
-    (topic: string) =>
+    (topic: string, server?: string) =>
       run(async () => {
-        await openNtfyTopic(topic);
+        await openNtfyTopic(topic, server);
       }),
     [run],
   );

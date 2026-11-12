@@ -7,6 +7,8 @@ const DEFAULT_SERVER: &str = "https://ntfy.ccnas.top:47777";
 #[serde(default, rename_all = "camelCase")]
 pub(super) struct NtfyConfig {
     pub(super) enabled: bool,
+    /// One or more server roots separated by newlines (commas are accepted too).
+    /// Kept as a single string so config files written by older builds stay valid.
     pub(super) server: String,
     pub(super) topics: Vec<String>,
     /// Topics that should still be listed but must not raise the popup alert.
@@ -29,6 +31,42 @@ impl Default for NtfyConfig {
             token: None,
         }
     }
+}
+
+impl NtfyConfig {
+    /// All configured servers in the order the user entered them. Never empty:
+    /// falls back to the default server if the field cannot be parsed.
+    pub(super) fn servers(&self) -> Vec<String> {
+        let servers = split_servers(&self.server);
+        if servers.is_empty() {
+            vec![DEFAULT_SERVER.to_string()]
+        } else {
+            servers
+        }
+    }
+
+    /// Only allow opening URLs on servers the user actually configured, so a
+    /// crafted message cannot make the opener launch an arbitrary address.
+    pub(super) fn server_for(&self, requested: &str) -> String {
+        let servers = self.servers();
+        let requested = requested.trim().trim_end_matches('/');
+        servers
+            .iter()
+            .find(|server| server.as_str() == requested)
+            .cloned()
+            .unwrap_or_else(|| servers[0].clone())
+    }
+}
+
+/// Split the stored server field into cleaned, de-duplicated addresses.
+fn split_servers(value: &str) -> Vec<String> {
+    let mut seen = HashSet::new();
+    value
+        .split(|character: char| character == ',' || character == '\n' || character == '\r')
+        .map(|part| part.trim().trim_end_matches('/').to_string())
+        .filter(|part| !part.is_empty())
+        .filter(|part| seen.insert(part.clone()))
+        .collect()
 }
 
 pub(super) fn load(path: &Path) -> NtfyConfig {
@@ -67,10 +105,17 @@ pub(super) fn normalize(
     enabled: bool,
     muted: Vec<String>,
 ) -> Result<NtfyConfig, String> {
-    let server = server.trim().trim_end_matches('/').to_string();
-    if !server.starts_with("http://") && !server.starts_with("https://") {
-        return Err("ntfy 服务器地址必须以 http:// 或 https:// 开头。".to_string());
+    let servers = split_servers(&server);
+    if servers.is_empty() {
+        return Err("至少填写一个 ntfy 服务器地址。".to_string());
     }
+    for address in &servers {
+        if !address.starts_with("http://") && !address.starts_with("https://") {
+            return Err("ntfy 服务器地址必须以 http:// 或 https:// 开头。".to_string());
+        }
+    }
+    // Store one address per line; sse::run receives each server separately.
+    let server = servers.join("\n");
     let mut seen = HashSet::new();
     let topics: Vec<String> = topics
         .into_iter()

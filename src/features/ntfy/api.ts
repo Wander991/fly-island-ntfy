@@ -4,6 +4,7 @@ import { listen, type EventCallback } from "@tauri-apps/api/event";
 // Mirrors src-tauri/src/ntfy/config.rs and src-tauri/src/ntfy/mod.rs.
 export type NtfyConfig = {
   enabled: boolean;
+  /** One address per line (commas also accepted); all servers subscribe to all topics. */
   server: string;
   topics: string[];
   muted: string[];
@@ -17,6 +18,8 @@ export type NtfyMessage = {
   body: string;
   priority: number;
   createdAt: number;
+  /** Server root this message arrived on, so opening a topic uses the right host. */
+  server: string;
 };
 
 export type NtfyStatus = "disabled" | "connecting" | "listening" | "error";
@@ -55,8 +58,8 @@ export function clearNtfyNotifications() {
   return invoke<NtfySnapshot>("clear_ntfy_notifications");
 }
 
-export function openNtfyTopic(topic: string) {
-  return invoke<void>("open_ntfy_topic", { topic });
+export function openNtfyTopic(topic: string, server?: string) {
+  return invoke<void>("open_ntfy_topic", { topic, server: server ?? null });
 }
 
 export function setNtfyTopicMuted(topic: string, muted: boolean) {
