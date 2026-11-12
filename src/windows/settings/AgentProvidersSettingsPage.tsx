@@ -68,9 +68,10 @@ export function AgentProvidersSettingsPage({
 
       <SettingsGroup title="本地接入接口" footer={`端口 ${port ?? "…"} · 仅监听 127.0.0.1，只接受展示数据，不执行任何命令。`}>
         <div style={{ padding: "10px 12px 12px" }}>
-          <p className="ext-note">让 WorkBuddy / 豆包 / Marvis 等在上报状态时 POST 一段 JSON；字段 provider 必须与上面的标识一致。</p>
+          <p className="ext-note">WorkBuddy 已内置自动读取本机会话状态，无需任何配置：岛启动后几秒内就会出现在「当前上报」，任务标题、动作、token 与完成提示都会自动更新。</p>
+          <p className="ext-note">豆包 / Marvis 等其他 Agent 若要显示，需自行 POST 一段 JSON；字段 provider 必须与上面的标识一致。</p>
           <code className="ext-code">{`POST http://127.0.0.1:${port ?? 27182}/agent-status
-{ "provider": "workbuddy", "phase": "running",
+{ "provider": "doubao", "phase": "running",
   "title": "整理周报", "task": "正在生成文档",
   "quotaUsed": 120, "quotaTotal": 500,
   "quotaLabel": "tokens", "needsApproval": false }`}</code>
@@ -81,7 +82,7 @@ export function AgentProvidersSettingsPage({
       <SettingsGroup title="当前上报">
         <div className="ext-status-list">
           {statuses.length === 0 ? (
-            <span className="ext-note">暂无上报。Agent 推送一次状态后会出现在这里。</span>
+            <span className="ext-note">暂无上报。WorkBuddy 会在岛启动后自动出现；其他 Agent 推送一次状态后显示在这里。</span>
           ) : statuses.map((status) => (
             <div className="ext-status-row" key={status.provider}>
               <strong>{providerLabel(status.provider)}</strong>
