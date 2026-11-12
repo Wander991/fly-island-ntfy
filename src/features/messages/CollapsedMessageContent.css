@@ -99,6 +99,44 @@
   flex: 1;
 }
 
+/* ntfy on the island: content only, no topic prefix. Long bodies scroll
+   horizontally inside the island instead of being clipped. */
+.island-message-preview__ntfy {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.ntfy-scroll-track {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.ntfy-scroll-text {
+  padding-right: 36px;
+}
+
+.island-message-preview__ntfy.is-scroll .ntfy-scroll-track {
+  animation: ntfyScroll 11s linear infinite;
+}
+
+@keyframes ntfyScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island-message-preview__ntfy.is-scroll .ntfy-scroll-track {
+    animation: none;
+  }
+}
+
 @keyframes islandSummaryEnter {
   from {
     opacity: 0;
