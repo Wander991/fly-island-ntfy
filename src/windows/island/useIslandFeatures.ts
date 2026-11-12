@@ -44,6 +44,7 @@ export function useIslandFeatures({
     qq: qqEnabled,
     wechat: wechatEnabled,
     qqMail: settings.mailEnabled,
+    ntfy: true,
     agents: settings.agentStatusEnabled,
     translation: settings.translationEnabled && settings.translationTarget === "island",
   }), [clipboardEnabled, qqEnabled, settings.agentStatusEnabled, settings.mailEnabled, settings.musicEnabled, settings.shelfEnabled, settings.todoEnabled, settings.translationEnabled, settings.translationTarget, wechatEnabled]);

@@ -13,7 +13,6 @@ import {
 } from "./api";
 
 const PREVIEW_MS = 8000;
-const PREVIEW_LEAVE_MS = 260;
 
 const EMPTY_SNAPSHOT: NtfySnapshot = {
   revision: 0,
@@ -30,7 +29,7 @@ const EMPTY_SNAPSHOT: NtfySnapshot = {
   },
 };
 
-type PreviewState = { id: string; expiresAt: number; leaving?: boolean };
+type PreviewState = { id: string; expiresAt: number };
 
 export function useNtfy(canPreview: boolean) {
   const t = useTranslation();
@@ -113,17 +112,10 @@ export function useNtfy(canPreview: boolean) {
 
   useEffect(() => {
     if (!previewWindow) return;
-    // When the preview expires, mark it as leaving so the overlay can play its
-    // fade-out animation before we unmount it.
-    if (previewWindow.leaving) {
-      const timer = window.setTimeout(() => setPreviewWindow(null), PREVIEW_LEAVE_MS);
-      return () => window.clearTimeout(timer);
-    }
+    // Like QQ / WeChat, the preview simply expires; the island's own
+    // CollapsedMessageContent handles the outgoing transition.
     const remain = Math.max(0, previewWindow.expiresAt - Date.now());
-    const timer = window.setTimeout(
-      () => setPreviewWindow((preview) => (preview ? { ...preview, leaving: true } : preview)),
-      remain,
-    );
+    const timer = window.setTimeout(() => setPreviewWindow(null), remain);
     return () => window.clearTimeout(timer);
   }, [previewWindow]);
 
@@ -203,7 +195,9 @@ export function useNtfy(canPreview: boolean) {
     busy,
     actionError,
     preview,
-    previewLeaving: previewWindow?.leaving ?? false,
+    // Timestamp (ms) when this preview popped, so the island can rank it
+    // against QQ / WeChat / mail previews in latestMessagePreview.
+    previewReceivedAt: previewWindow ? previewWindow.expiresAt - PREVIEW_MS : null,
     muted: snapshot.config.muted,
     setEnabled,
     saveConfig,

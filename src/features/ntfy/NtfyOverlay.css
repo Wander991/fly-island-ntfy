@@ -1,179 +1,6 @@
-.ntfy-overlay {
-  position: fixed;
-  top: 12px;
-  right: 14px;
-  left: auto;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-family: var(--font-ui);
-  pointer-events: none;
-}
-
-.ntfy-overlay > * {
-  pointer-events: auto;
-}
-
-.ntfy-pill,
-.ntfy-panel {
-  color: var(--text-1);
-  background: var(--island-background-color, #2f2f37);
-  border: 1px solid var(--color-white-a16);
-  border-radius: var(--radius-lg);
-}
-
-.ntfy-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  min-height: 26px;
-  padding: 4px 10px;
-  font-size: 12px;
-  line-height: 1.4;
-  cursor: pointer;
-}
-
-.ntfy-pill--error {
-  border-color: var(--color-danger);
-}
-
-.ntfy-pill__count {
-  min-width: 18px;
-  padding: 0 5px;
-  color: var(--color-white);
-  background: var(--color-danger);
-  border-radius: var(--radius-pill);
-  font-size: 11px;
-  text-align: center;
-}
-
-.ntfy-preview {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  width: auto;
-  min-width: 188px;
-  max-width: calc(100vw - 28px);
-  padding: 9px 14px;
-  text-align: left;
-  cursor: pointer;
-  color: #f5f5f7;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)),
-    rgba(47, 47, 55, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
-  corner-shape: superellipse(1.6);
-  box-shadow:
-    0 14px 32px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(20px) saturate(1.12);
-  -webkit-backdrop-filter: blur(20px) saturate(1.12);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -0.15px;
-  -webkit-font-smoothing: antialiased;
-  animation: ntfy-preview-in 320ms cubic-bezier(0.2, 0.85, 0.2, 1);
-  transform-origin: top right;
-  transition: transform 140ms ease, box-shadow 140ms ease;
-}
-
-.ntfy-preview:hover {
-  box-shadow:
-    0 16px 36px rgba(0, 0, 0, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-}
-
-.ntfy-overlay--leaving .ntfy-preview {
-  animation: ntfy-preview-out 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
-  pointer-events: none;
-}
-
-@keyframes ntfy-preview-in {
-  from {
-    opacity: 0;
-    transform: translateY(-14px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes ntfy-preview-out {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.97);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ntfy-preview,
-  .ntfy-overlay--leaving .ntfy-preview {
-    animation: none;
-  }
-}
-
-/* Left: ntfy source chip — a brand-style rounded square, like the WeChat/QQ icons. */
-.ntfy-preview__source {
-  display: inline-grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  flex: 0 0 auto;
-  border-radius: 6px;
-  corner-shape: superellipse(1.6);
-  color: #fff;
-  background: linear-gradient(135deg, #2f8c61 0%, #3ae489 100%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-
-/* Middle: sender · body inline, native banner style. */
-.ntfy-preview__text {
-  display: flex;
-  align-items: baseline;
-  gap: 5px;
-  flex: 1;
-  min-width: 0;
-}
-
-.ntfy-preview__text strong,
-.ntfy-preview__sep,
-.ntfy-preview__body {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ntfy-preview__text strong {
-  flex: 0 1 auto;
-  max-width: 42%;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.ntfy-preview__sep {
-  flex: 0 0 auto;
-  color: rgba(245, 245, 247, 0.4);
-}
-
-.ntfy-preview__body {
-  flex: 1;
-  min-width: 0;
-  color: rgba(245, 245, 247, 0.62);
-  font-size: 13px;
-  font-weight: 500;
-}
-
+/* Styles for the ntfy tab in the messages page (NtfyPanelBody).
+ * The floating overlay was removed: ntfy now surfaces as a native message
+ * preview inside the collapsed island, alongside QQ / WeChat / mail. */
 .ntfy-panel {
   display: flex;
   flex-direction: column;
@@ -182,6 +9,10 @@
   max-height: 360px;
   padding: 12px;
   box-sizing: border-box;
+  color: var(--text-1);
+  background: var(--island-background-color, #2f2f37);
+  border: 1px solid var(--color-white-a16);
+  border-radius: var(--radius-lg);
 }
 
 .ntfy-panel__header {
@@ -264,8 +95,6 @@
 
 .ntfy-field input:focus-visible,
 .ntfy-field textarea:focus-visible,
-.ntfy-pill:focus-visible,
-.ntfy-preview:focus-visible,
 .ntfy-icon-button:focus-visible,
 .ntfy-panel__actions button:focus-visible,
 .ntfy-item:focus-visible {

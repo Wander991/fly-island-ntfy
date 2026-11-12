@@ -129,6 +129,11 @@ export function IslandCollapsedBar({
                   void qqMail.readMail(qqMail.preview, qqMail.previewAccount);
                   return;
                 }
+                // ntfy has no external app to focus; open its tab in the messages page.
+                if (source === "ntfy") {
+                  onOpenMessages("ntfy");
+                  return;
+                }
                 const open = source === "qq" ? qqNotifications.openQQ : wechatReminders.openWeChat;
                 void open().then((opened) => {
                   if (opened === false) onOpenMessages(source);

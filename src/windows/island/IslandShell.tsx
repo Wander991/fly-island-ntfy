@@ -9,6 +9,7 @@ import { latestMessagePreview, type MessageSource } from "../../features/message
 import type { MailController } from "../../features/messages/mail/MailPanel";
 import type { QQNotificationsController } from "../../features/messages/qq-notifications/QQNotifications";
 import type { WeChatRemindersController } from "../../features/messages/wechat/WeChatReminders";
+import type { NtfyController } from "../../features/ntfy/useNtfy";
 import { useTranslation } from "../../i18n";
 import type { IslandFeatures } from "./features";
 import { collapsedOpenPage } from "./collapsedOpenPage";
@@ -25,6 +26,7 @@ type IslandShellProps = {
   qqMail: MailController;
   qqNotifications: QQNotificationsController;
   wechatReminders: WeChatRemindersController;
+  ntfy: NtfyController;
   onOpenMessages: (source: MessageSource) => void;
   mode: IslandMode;
   page: IslandPage;
@@ -81,6 +83,7 @@ export function IslandShell({
   qqMail,
   qqNotifications,
   wechatReminders,
+  ntfy,
   onOpenMessages,
   mode,
   page,
@@ -136,6 +139,11 @@ export function IslandShell({
     qqPreview ? { ...qqPreview, source: "qq", receivedAt: qqNotifications.previewReceivedAt ?? 0 } : null,
     wechatPreviewAt !== null ? { source: "wechat", title: t.messages.wechat, body: t.messages.newReminder, receivedAt: wechatPreviewAt } : null,
     qqMail.preview ? { source: "qqMail", title: qqMail.preview.sender, body: qqMail.preview.subject, receivedAt: qqMail.previewReceivedAt ?? 0 } : null,
+    // ntfy is a first-class message source: the topic acts as the sender, the
+    // message body as the content, rendered inside the island like QQ/WeChat.
+    ntfy.preview && ntfy.previewReceivedAt !== null
+      ? { source: "ntfy", title: ntfy.preview.topic, body: ntfy.preview.body || ntfy.preview.topic, receivedAt: ntfy.previewReceivedAt }
+      : null,
   ], latestPreviewAt);
   if (preview && preview.receivedAt > latestPreviewAt) setLatestPreviewAt(preview.receivedAt);
   const className = [

@@ -31,9 +31,9 @@ export function messagePanelHeight(source: MessageView, readingMail = false) {
 
 export function MessagesPanel({ qqMail, qqNotifications, wechatReminders, ntfy, source, enabledSources, onSourceChange, onOpenMailSettings }: MessagesProps) {
   const t = useTranslation();
-  const [view, setView] = useState<MessageView | "ntfy">(source);
+  const [view, setView] = useState<MessageView>(source);
 
-  // Keep the local tab in step with the active source set from outside (header bell, etc.).
+  // Keep the local tab in step with the active source set from outside (island preview, header bell, etc.).
   useEffect(() => {
     setView(source);
   }, [source]);
@@ -43,7 +43,9 @@ export function MessagesPanel({ qqMail, qqNotifications, wechatReminders, ntfy, 
     setView(next);
     onSourceChange(next);
   };
-  const openNtfy = () => setView("ntfy");
+  // ntfy is a first-class message source now, so keep the outer source in sync
+  // when the tab is picked (and when a preview on the island is clicked).
+  const openNtfy = () => navigate("ntfy");
   const ntfyCount = ntfy.snapshot.items.length;
   const navigation = (
     <div className="message-sources" role="group" aria-label={t.messages.sources}>

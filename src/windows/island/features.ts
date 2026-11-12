@@ -10,6 +10,8 @@ export type IslandFeatures = {
   qq: boolean;
   wechat: boolean;
   qqMail: boolean;
+  /** ntfy is always on: its tab sits beside QQ / WeChat / mail in the messages page. */
+  ntfy: boolean;
   /** The AI Agent switch; off hides the Agent page. */
   agents: boolean;
   /** Translation is on and set to open as an island page rather than its own window. */
@@ -21,7 +23,8 @@ const SOURCE_ORDER: MessageSource[] = ["qq", "wechat", "qqMail"];
 
 export function isPageEnabled(page: IslandPage, features: IslandFeatures): boolean {
   if (page === "settings") return true;
-  return page === "qq" ? features.qq || features.wechat || features.qqMail : features[page] === true;
+  // ntfy is always on, so the messages page stays reachable even if QQ/WeChat/mail are all off.
+  return page === "qq" ? features.qq || features.wechat || features.qqMail || features.ntfy : features[page] === true;
 }
 
 /** `page` when it is on, otherwise the first page that is, or null when every page is off. */

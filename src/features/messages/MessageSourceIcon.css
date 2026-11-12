@@ -8,3 +8,8 @@
   border-radius: var(--corner-xs);
   corner-shape: var(--corner-shape);
 }
+
+/* ntfy uses the Bell glyph; tint it to match the island's green status dot. */
+.message-brand-icon--ntfy {
+  color: var(--island-pulse-color, #3ae489);
+}

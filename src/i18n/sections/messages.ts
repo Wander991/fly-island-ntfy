@@ -15,6 +15,7 @@ export type MessagesText = {
     qq: string;
     wechat: string;
     qqMail: string;
+    ntfy: string;
     plugin: string;
   };
   collapsedTask: (title: string) => string;
@@ -42,6 +43,7 @@ export const zhCN: MessagesText = {
     qq: "QQ",
     wechat: "微信",
     qqMail: "邮箱",
+    ntfy: "ntfy",
     plugin: "插件",
   },
   collapsedTask: (title) => `待办：${title}`,
@@ -69,6 +71,7 @@ export const en: MessagesText = {
     qq: "QQ",
     wechat: "WeChat",
     qqMail: "Mail",
+    ntfy: "ntfy",
     plugin: "Plugin",
   },
   collapsedTask: (title) => `Task: ${title}`,
