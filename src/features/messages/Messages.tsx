@@ -23,13 +23,15 @@ type MessagesProps = {
   onSourceChange: (source: MessageView) => void;
   /** Opens the settings window on the mail page, where mailboxes are added. */
   onOpenMailSettings?: () => void;
+  /** Opens Settings → ntfy 通知, where the subscription config now lives. */
+  onOpenNtfySettings?: () => void;
 };
 
 export function messagePanelHeight(source: MessageView, readingMail = false) {
   return source === "qqMail" && readingMail ? 450 : 350;
 }
 
-export function MessagesPanel({ qqMail, qqNotifications, wechatReminders, ntfy, source, enabledSources, onSourceChange, onOpenMailSettings }: MessagesProps) {
+export function MessagesPanel({ qqMail, qqNotifications, wechatReminders, ntfy, source, enabledSources, onSourceChange, onOpenMailSettings, onOpenNtfySettings }: MessagesProps) {
   const t = useTranslation();
   const [view, setView] = useState<MessageView>(source);
 
@@ -56,7 +58,7 @@ export function MessagesPanel({ qqMail, qqNotifications, wechatReminders, ntfy, 
     </div>
   );
 
-  if (view === "ntfy") return <NtfyPanelBody controller={ntfy} navigation={navigation} />;
+  if (view === "ntfy") return <NtfyPanelBody controller={ntfy} navigation={navigation} onOpenSettings={onOpenNtfySettings} />;
   if (source === "qqMail") return <MailPanel controller={qqMail} navigation={navigation} onOpenSettings={onOpenMailSettings} />;
   if (source === "wechat") return <WeChatReminderPanel controller={wechatReminders} navigation={navigation} />;
   return <QQNotificationPanel controller={qqNotifications} navigation={navigation} />;

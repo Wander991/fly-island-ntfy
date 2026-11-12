@@ -119,7 +119,7 @@ export function IslandPages({
       {page === "system" && <SystemStatusPanel settings={settings} isOpen={mode === "expanded"} />}
       {page === "qq" && (
         <div className="message-panel">
-          <MessagesPanel qqMail={qqMail} qqNotifications={qqNotifications} wechatReminders={wechatReminders} ntfy={ntfy} source={messageSource} enabledSources={features} onSourceChange={openMessages} onOpenMailSettings={() => openSettingsWindow("mail")} />
+          <MessagesPanel qqMail={qqMail} qqNotifications={qqNotifications} wechatReminders={wechatReminders} ntfy={ntfy} source={messageSource} enabledSources={features} onSourceChange={openMessages} onOpenMailSettings={() => openSettingsWindow("mail")} onOpenNtfySettings={() => openSettingsWindow("ntfy")} />
         </div>
       )}
       {page === "music" && (

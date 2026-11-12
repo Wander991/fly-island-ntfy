@@ -17,6 +17,8 @@ export type NtfyText = {
   preview: (topic: string, title: string) => string;
   count: (count: number) => string;
   settings: string;
+  /** Shown in the read-only island tab, pointing at the settings page. */
+  settingsHint: string;
   close: string;
   error: string;
   mute: string;
@@ -53,6 +55,7 @@ export const zhCN: NtfyText = {
   preview: (topic, title) => `${topic}：${title}`,
   count: (count) => `${count} 条通知`,
   settings: "ntfy 设置",
+  settingsHint: "订阅、服务器与提醒开关都在「设置 → ntfy 通知」里配置",
   close: "关闭",
   error: "错误",
   mute: "静音",
@@ -89,6 +92,7 @@ export const en: NtfyText = {
   preview: (topic, title) => `${topic}: ${title}`,
   count: (count) => `${count} notification${count === 1 ? "" : "s"}`,
   settings: "ntfy settings",
+  settingsHint: "Subscriptions, servers and alerts live in Settings → ntfy notifications",
   close: "Close",
   error: "Error",
   mute: "Mute",

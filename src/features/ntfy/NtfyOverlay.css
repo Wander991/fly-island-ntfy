@@ -348,3 +348,56 @@
   opacity: 0.4;
   cursor: default;
 }
+
+/* Read-only island tab: a small pointer to the settings page instead of the
+   configuration form that used to fill this panel. */
+.ntfy-panel__settings-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px 10px;
+  color: var(--text-3);
+  background: var(--color-white-a04);
+  border: 1px solid var(--color-white-a08);
+  border-radius: var(--radius-md);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.ntfy-panel__settings-bar span {
+  flex: 1;
+  min-width: 0;
+}
+
+.ntfy-panel__settings-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  min-height: 24px;
+  padding: 3px 9px;
+  color: var(--text-2);
+  background: var(--color-white-a08);
+  border: 1px solid var(--color-white-a10);
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ntfy-panel__settings-bar button:hover {
+  color: var(--text-1);
+  background: var(--color-white-a12, var(--color-white-a08));
+}
+
+.ntfy-panel__settings-bar button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.ntfy-panel__list-head {
+  padding: 8px 4px 2px;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+}
