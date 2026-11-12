@@ -204,9 +204,18 @@ fn push_message(service: &Arc<NtfyService>, message: NtfyMessage) {
         state.snapshot.items.insert(0, message.clone());
         state.snapshot.items.truncate(MAX_ITEMS);
         state.snapshot.revision += 1;
-        (state.snapshot.clone(), message.id)
+        // Muted topics are still collected in the list, but must not raise the
+        // intrusive popup preview.
+        let muted = state
+            .snapshot
+            .config
+            .muted
+            .iter()
+            .any(|topic| topic.eq_ignore_ascii_case(&message.topic));
+        let newest_id = if muted { None } else { Some(message.id.clone()) };
+        (state.snapshot.clone(), newest_id)
     };
-    publish(service, snapshot, Some(newest_id));
+    publish(service, snapshot, newest_id);
 }
 
 fn publish(service: &Arc<NtfyService>, snapshot: NtfySnapshot, newest_id: Option<String>) {
@@ -279,7 +288,8 @@ pub fn set_ntfy_config(
 ) -> Result<NtfySnapshot, String> {
     let service = service()?;
     let enabled = current_config(service.as_ref()).enabled;
-    let next = config::normalize(server, topics, token, enabled)?;
+    let muted = current_config(service.as_ref()).muted.clone();
+    let next = config::normalize(server, topics, token, enabled, muted)?;
     service.generation.fetch_add(1, Ordering::SeqCst);
     let snapshot = {
         let mut state = service
@@ -325,6 +335,34 @@ pub fn clear_ntfy_notifications() -> Result<NtfySnapshot, String> {
     Ok(snapshot)
 }
 
+/// Mute or unmute a single subscribed topic. Muted topics stay in the list but
+/// no longer raise the popup alert.
+#[tauri::command]
+pub fn set_ntfy_topic_muted(topic: String, muted: bool) -> Result<NtfySnapshot, String> {
+    let service = service()?;
+    let snapshot = {
+        let mut state = service
+            .state
+            .lock()
+            .map_err(|_| "ntfy 状态不可用。".to_string())?;
+        let mut config = state.snapshot.config.clone();
+        let topic = topic.trim().to_string();
+        if muted {
+            if !config.muted.iter().any(|t| t.eq_ignore_ascii_case(&topic)) {
+                config.muted.push(topic);
+            }
+        } else {
+            config.muted.retain(|t| !t.eq_ignore_ascii_case(&topic));
+        }
+        config::save(&service.config_path, &config)?;
+        state.snapshot.config = config;
+        state.snapshot.revision += 1;
+        state.snapshot.clone()
+    };
+    publish(service, snapshot.clone(), None);
+    Ok(snapshot)
+}
+
 #[tauri::command]
 pub fn open_ntfy_topic(app: AppHandle, topic: String) -> Result<(), String> {
     let topic = topic.trim();
@@ -354,6 +392,7 @@ macro_rules! tauri_commands {
             crate::ntfy::set_ntfy_enabled,
             crate::ntfy::set_ntfy_config,
             crate::ntfy::clear_ntfy_notifications,
+            crate::ntfy::set_ntfy_topic_muted,
             crate::ntfy::open_ntfy_topic,
         ] $($rest)*)
     };

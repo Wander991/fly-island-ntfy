@@ -59,6 +59,57 @@
   padding: 10px 12px;
   text-align: left;
   cursor: pointer;
+  background: rgba(47, 47, 55, 0.86);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.38),
+    0 2px 8px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px var(--color-white-a10);
+  animation: ntfy-preview-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: top center;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.ntfy-preview:hover {
+  box-shadow:
+    0 14px 38px rgba(0, 0, 0, 0.44),
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px var(--color-white-a16);
+}
+
+.ntfy-overlay--leaving .ntfy-preview {
+  animation: ntfy-preview-out 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes ntfy-preview-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ntfy-preview-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ntfy-preview,
+  .ntfy-overlay--leaving .ntfy-preview {
+    animation: none;
+  }
 }
 
 .ntfy-preview__text {
@@ -322,4 +373,58 @@
 .ntfy-panel__status-row strong {
   font-size: 13px;
   font-weight: 600;
+}
+
+.ntfy-mute-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 2px 0 4px;
+  padding: 6px;
+  background: var(--color-white-a04);
+  border: 1px solid var(--color-white-a08);
+  border-radius: var(--radius-md);
+}
+
+.ntfy-mute-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.ntfy-mute-row__topic {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.ntfy-mute-row__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  min-height: 24px;
+  padding: 3px 8px;
+  color: var(--text-2);
+  background: var(--color-white-a06);
+  border: 1px solid var(--color-white-a10);
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.ntfy-mute-row__toggle[aria-pressed="true"] {
+  color: var(--color-warning);
+  background: var(--color-warning-a12, rgba(255, 184, 0, 0.14));
+  border-color: var(--color-warning-a24, rgba(255, 184, 0, 0.28));
+}
+
+.ntfy-mute-row__toggle:disabled {
+  opacity: 0.4;
+  cursor: default;
 }

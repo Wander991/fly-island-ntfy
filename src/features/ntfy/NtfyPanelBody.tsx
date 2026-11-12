@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Settings, Trash2 } from "lucide-react";
+import { Bell, BellOff, Settings, Trash2 } from "lucide-react";
 import { useTranslation } from "../../i18n";
 import type { NtfyController } from "./useNtfy";
 import "./NtfyOverlay.css";
@@ -30,7 +30,8 @@ type NtfyPanelBodyProps = {
  */
 export function NtfyPanelBody({ controller, navigation }: NtfyPanelBodyProps) {
   const t = useTranslation();
-  const { snapshot, busy, actionError, setEnabled, saveConfig, clear, openTopic } = controller;
+  const { snapshot, busy, actionError, setEnabled, saveConfig, clear, openTopic, toggleMute, muted } =
+    controller;
   const [serverDraft, setServerDraft] = useState(snapshot.config.server);
   const [topicsDraft, setTopicsDraft] = useState(snapshot.config.topics.join("\n"));
   const [tokenDraft, setTokenDraft] = useState(snapshot.config.token ?? "");
@@ -83,6 +84,33 @@ export function NtfyPanelBody({ controller, navigation }: NtfyPanelBodyProps) {
           />
           <small>{t.ntfy.topicsHint}</small>
         </label>
+        {topics.length > 0 && (
+          <div className="ntfy-mute-list" aria-label={t.ntfy.topicMuteHint}>
+            {topics.map((topic) => {
+              const isMuted = muted.includes(topic);
+              return (
+                <div className="ntfy-mute-row" key={topic}>
+                  <span className="ntfy-mute-row__topic">{topic}</span>
+                  <button
+                    type="button"
+                    className="ntfy-mute-row__toggle"
+                    disabled={busy}
+                    aria-pressed={isMuted}
+                    aria-label={isMuted ? t.ntfy.unmute : t.ntfy.mute}
+                    onClick={() => void toggleMute(topic)}
+                  >
+                    {isMuted ? (
+                      <BellOff size={14} strokeWidth={1.75} aria-hidden="true" />
+                    ) : (
+                      <Bell size={14} strokeWidth={1.75} aria-hidden="true" />
+                    )}
+                    <span>{isMuted ? t.ntfy.unmute : t.ntfy.mute}</span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
         <label className="ntfy-field">
           <span>{t.ntfy.token}</span>
           <input

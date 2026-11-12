@@ -91,12 +91,24 @@ fn normalized_path(path: &str) -> String {
         .to_lowercase()
 }
 
+/// Whether `path` points at a WeChat / Weixin process. Matching by file name
+/// (not the full path) lets a single shell hook catch every instance and every
+/// version — including the common "多开" case where two copies share one install
+/// or run from different folders.
+fn is_wechat_executable(path: &str) -> bool {
+    let name = std::path::Path::new(path)
+        .file_name()
+        .map(|name| name.to_string_lossy().to_lowercase())
+        .unwrap_or_default();
+    name == "wechat.exe" || name == "weixin.exe"
+}
+
 fn matches_window(window: HWND, executable: &str) -> Result<bool, ()> {
     if window.is_invalid() {
         return Ok(false);
     }
     let path = process::image_path(process::window_process_id(window)).ok_or(())?;
-    Ok(normalized_path(&path) == executable)
+    Ok(is_wechat_executable(&path) || normalized_path(&path) == executable)
 }
 
 struct ReminderWindow;

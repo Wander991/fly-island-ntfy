@@ -9,6 +9,8 @@ pub(super) struct NtfyConfig {
     pub(super) enabled: bool,
     pub(super) server: String,
     pub(super) topics: Vec<String>,
+    /// Topics that should still be listed but must not raise the popup alert.
+    pub(super) muted: Vec<String>,
     pub(super) token: Option<String>,
 }
 
@@ -23,6 +25,7 @@ impl Default for NtfyConfig {
                 "hfish-alert".to_string(),
                 "monitor-10001".to_string(),
             ],
+            muted: Vec::new(),
             token: None,
         }
     }
@@ -33,7 +36,13 @@ pub(super) fn load(path: &Path) -> NtfyConfig {
         .ok()
         .and_then(|text| serde_json::from_str::<NtfyConfig>(&text).ok());
     match parsed {
-        Some(config) => match normalize(config.server, config.topics, config.token, config.enabled) {
+        Some(config) => match normalize(
+            config.server,
+            config.topics,
+            config.token,
+            config.enabled,
+            config.muted,
+        ) {
             Ok(config) => config,
             Err(_) => NtfyConfig::default(),
         },
@@ -56,6 +65,7 @@ pub(super) fn normalize(
     topics: Vec<String>,
     token: Option<String>,
     enabled: bool,
+    muted: Vec<String>,
 ) -> Result<NtfyConfig, String> {
     let server = server.trim().trim_end_matches('/').to_string();
     if !server.starts_with("http://") && !server.starts_with("https://") {
@@ -88,10 +98,18 @@ pub(super) fn normalize(
     let token = token
         .map(|value| value.trim().to_string())
         .filter(|value| !value.is_empty());
+    let mut muted_seen = HashSet::new();
+    let muted: Vec<String> = muted
+        .into_iter()
+        .map(|topic| topic.trim().to_string())
+        .filter(|topic| !topic.is_empty())
+        .filter(|topic| muted_seen.insert(topic.clone()))
+        .collect();
     let mut config = NtfyConfig::default();
     config.enabled = enabled;
     config.server = server;
     config.topics = topics;
+    config.muted = muted;
     config.token = token;
     Ok(config)
 }

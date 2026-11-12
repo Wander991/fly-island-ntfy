@@ -6,6 +6,7 @@ export type NtfyConfig = {
   enabled: boolean;
   server: string;
   topics: string[];
+  muted: string[];
   token: string | null;
 };
 
@@ -56,6 +57,10 @@ export function clearNtfyNotifications() {
 
 export function openNtfyTopic(topic: string) {
   return invoke<void>("open_ntfy_topic", { topic });
+}
+
+export function setNtfyTopicMuted(topic: string, muted: boolean) {
+  return invoke<NtfySnapshot>("set_ntfy_topic_muted", { topic, muted });
 }
 
 export function listenNtfyChanged(handler: EventCallback<NtfyEvent>) {

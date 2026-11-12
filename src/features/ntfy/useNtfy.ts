@@ -8,10 +8,12 @@ import {
   openNtfyTopic,
   setNtfyConfig,
   setNtfyEnabled,
+  setNtfyTopicMuted,
   type NtfySnapshot,
 } from "./api";
 
 const PREVIEW_MS = 8000;
+const PREVIEW_LEAVE_MS = 260;
 
 const EMPTY_SNAPSHOT: NtfySnapshot = {
   revision: 0,
@@ -23,16 +25,19 @@ const EMPTY_SNAPSHOT: NtfySnapshot = {
     enabled: false,
     server: "https://ntfy.ccnas.top:47777",
     topics: [],
+    muted: [],
     token: null,
   },
 };
+
+type PreviewState = { id: string; expiresAt: number; leaving?: boolean };
 
 export function useNtfy(canPreview: boolean) {
   const t = useTranslation();
   const [snapshot, setSnapshot] = useState<NtfySnapshot>(EMPTY_SNAPSHOT);
   const [busy, setBusy] = useState(isTauri);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [previewWindow, setPreviewWindow] = useState<{ id: string; expiresAt: number } | null>(null);
+  const [previewWindow, setPreviewWindow] = useState<PreviewState | null>(null);
   const canPreviewRef = useRef(canPreview);
   const revisionRef = useRef(-1);
   const actionPending = useRef(false);
@@ -108,9 +113,16 @@ export function useNtfy(canPreview: boolean) {
 
   useEffect(() => {
     if (!previewWindow) return;
+    // When the preview expires, mark it as leaving so the overlay can play its
+    // fade-out animation before we unmount it.
+    if (previewWindow.leaving) {
+      const timer = window.setTimeout(() => setPreviewWindow(null), PREVIEW_LEAVE_MS);
+      return () => window.clearTimeout(timer);
+    }
+    const remain = Math.max(0, previewWindow.expiresAt - Date.now());
     const timer = window.setTimeout(
-      () => setPreviewWindow(null),
-      Math.max(0, previewWindow.expiresAt - Date.now()),
+      () => setPreviewWindow((preview) => (preview ? { ...preview, leaving: true } : preview)),
+      remain,
     );
     return () => window.clearTimeout(timer);
   }, [previewWindow]);
@@ -173,20 +185,31 @@ export function useNtfy(canPreview: boolean) {
     [run],
   );
 
-  const preview =
-    canPreview && previewWindow
-      ? snapshot.items.find((item) => item.id === previewWindow.id) ?? null
-      : null;
+  const toggleMute = useCallback(
+    (topic: string) =>
+      run(async () => {
+        const muted = !snapshot.config.muted.includes(topic);
+        acceptSnapshot(await setNtfyTopicMuted(topic, muted));
+      }),
+    [acceptSnapshot, run, snapshot.config.muted],
+  );
+
+  const preview = previewWindow
+    ? snapshot.items.find((item) => item.id === previewWindow.id) ?? null
+    : null;
 
   return {
     snapshot,
     busy,
     actionError,
     preview,
+    previewLeaving: previewWindow?.leaving ?? false,
+    muted: snapshot.config.muted,
     setEnabled,
     saveConfig,
     clear,
     openTopic,
+    toggleMute,
   };
 }
 

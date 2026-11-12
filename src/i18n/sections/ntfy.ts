@@ -18,6 +18,9 @@ export type NtfyText = {
   settings: string;
   close: string;
   error: string;
+  mute: string;
+  unmute: string;
+  topicMuteHint: string;
 };
 
 export const zhCN: NtfyText = {
@@ -47,6 +50,9 @@ export const zhCN: NtfyText = {
   settings: "ntfy 设置",
   close: "关闭",
   error: "错误",
+  mute: "静音",
+  unmute: "取消静音",
+  topicMuteHint: "关闭某个订阅的弹窗提醒（仍保留在列表中）",
 };
 
 export const en: NtfyText = {
@@ -76,4 +82,7 @@ export const en: NtfyText = {
   settings: "ntfy settings",
   close: "Close",
   error: "Error",
+  mute: "Mute",
+  unmute: "Unmute",
+  topicMuteHint: "Turn off the popup alert for a subscription (kept in the list)",
 };

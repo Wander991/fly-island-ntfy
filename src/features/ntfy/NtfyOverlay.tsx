@@ -11,12 +11,12 @@ import "./NtfyOverlay.css";
  */
 export function NtfyOverlay({ controller }: { controller: NtfyController }) {
   const t = useTranslation();
-  const { preview, openTopic } = controller;
+  const { preview, previewLeaving, openTopic } = controller;
 
   if (!preview) return null;
 
   return (
-    <div className="ntfy-overlay">
+    <div className={`ntfy-overlay${previewLeaving ? " ntfy-overlay--leaving" : ""}`}>
       <button
         type="button"
         className="ntfy-preview"

@@ -271,6 +271,7 @@ pub async fn open_wechat() -> Result<(), String> {
     .map_err(|error| format!("打开微信的线程失败：{error}"))?
 }
 
+#[derive(Clone, Copy)]
 struct WeChatWindow {
     handle: HWND,
     started_at: u64,
@@ -284,12 +285,23 @@ struct WindowSearch {
     running: bool,
 }
 
-fn preferred_window(windows: &[WeChatWindow]) -> Option<&WeChatWindow> {
-    // Only full main windows qualify; prefer the visible window, then the older instance.
-    windows
-        .iter()
+/// Main-sized WeChat windows ordered for activation: the foreground window
+/// first, then a visible one, then the oldest instance. This stops a 多开 setup
+/// from raising the wrong copy of WeChat.
+fn order_wechat_windows(windows: Vec<WeChatWindow>) -> Vec<WeChatWindow> {
+    let foreground = crate::win32::window::foreground_window();
+    let mut ordered: Vec<WeChatWindow> = windows
+        .into_iter()
         .filter(|window| window.main_sized)
-        .min_by_key(|window| (!window.visible, window.started_at))
+        .collect();
+    ordered.sort_by_key(|window| (foreground != window.handle, !window.visible, window.started_at));
+    ordered
+}
+
+/// Convenience wrapper kept for the existing unit tests: the first window
+/// `order_wechat_windows` would raise.
+fn preferred_window(windows: &[WeChatWindow]) -> Option<WeChatWindow> {
+    order_wechat_windows(windows.to_vec()).into_iter().next()
 }
 
 fn find_wechat_window(search: &mut WindowSearch, window: HWND) {
@@ -333,27 +345,18 @@ fn activate_existing_wechat(executable: &std::path::Path) -> Result<bool, String
     if !search.running {
         return Ok(false);
     }
-    let original = preferred_window(&search.found)
-        .ok_or("微信已在运行，但未定位到主窗口，请先从系统托盘打开并登录微信。")?;
-    let expected_process = win32::process::window_process_id(original.handle);
-    // The registered handler restores Qt's own UI state. Showing its HWND directly can leave it blank.
-    tauri_plugin_opener::open_url("weixin://", None::<&str>).map_err(|error| {
-        format!("无法通过微信注册入口唤回客户端，请从系统托盘打开微信：{error}")
-    })?;
-    for _ in 0..40 {
-        thread::sleep(Duration::from_millis(50));
-        let current = existing_wechat_windows(executable)?;
-        if let Some(window) = preferred_window(&current.found) {
-            let process_id = win32::process::window_process_id(window.handle);
-            if process_id == expected_process
-                && window.visible
-                && !win32::window::is_minimized(window.handle)
-            {
-                return Ok(true);
-            }
+    let candidates = order_wechat_windows(search.found);
+    if candidates.is_empty() {
+        return Err("微信已在运行，但未定位到主窗口，请先从系统托盘打开并登录微信。".into());
+    }
+    // Bring each candidate to the front directly instead of relying on the
+    // weixin:// URL, which is ambiguous under 多开 and may raise the wrong copy.
+    for window in candidates {
+        if crate::win32::window::force_foreground(window.handle) {
+            return Ok(true);
         }
     }
-    Err("微信未能恢复原来的主窗口，请双击系统托盘中的微信图标。".into())
+    Err("微信窗口未能置前，请双击系统托盘中的微信图标。".into())
 }
 
 /// This module's Tauri commands. `lib.rs` chains every module's list into one
